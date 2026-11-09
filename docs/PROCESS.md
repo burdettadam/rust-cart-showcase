@@ -35,3 +35,29 @@ final source and deployment artifact. The actual Git history is preserved.
 Source is frozen for acceptance checks and separate contract and adversarial
 reviews. Final commands, outcomes, source identities, findings and limitations
 are retained with the delivered evidence and summarized in `HANDOFF.md`.
+
+## Independent findings and final verification
+
+Core adversarial review exposed a pre-existing exact 16 KiB reader boundary defect.
+A regression failed on the old code, then passed with one bounded byte of EOF
+lookahead. Both core round 2 reviews passed 7b251364. The companion exports that
+corrected source; the cart algorithm and accepted business rules remain unchanged.
+
+Showcase contract review found that TextDecoder removed a leading UTF-8 BOM.
+Three new transport/handoff tests failed before `ignoreBOM: true`; all 24 passed
+afterward. The actual WASM rejection checks also include BOM-prefixed input.
+Mobile browser QA showed large amounts wrapping mid-number; a display-only change
+keeps complete decimal strings readable with compact type and stacked rows.
+
+A later coverage export failed on transient `.rsync-tmp` objects created by the
+managed browser synchronization process. The behavior tests had passed, but that
+coverage command correctly stayed failed. Compiler output was moved to a scoped
+location outside the synchronized tree. The full renewed check set passed there.
+The failed attempt remains retained; it was not silently replaced by a passing
+report. This environment adjustment does not exclude any production coverage.
+
+Actual Chrome interaction covered the sample, tax/repricing/error scenarios,
+invalid quantity, a large exact decimal, mode reset and a real live price request.
+A 375px content viewport also exercised the project-subpath build. These checks
+establish observed behavior in that browser; they are not cross-browser testing,
+human review, hosted CI or a GitHub Pages deployment.

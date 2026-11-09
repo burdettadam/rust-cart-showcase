@@ -69,3 +69,10 @@ the outstanding action. Local previews and task-specific toolchain paths are
 reconstructable and do not belong in the source archive. Save the completed
 checkpoint before deleting any worktree or generated evidence. A saved archive
 is recoverable source, not proof of remote publication or automatic backups.
+
+Managed browser-preview synchronization can create temporary files in directories
+under its shared workspace. During local QA, place Cargo output outside that
+synchronized tree using a task-scoped `CARGO_TARGET_DIR` if coverage export races
+with those files. The retained evidence records the actual environment. The
+GitHub Actions job does not run that preview synchronizer. Do not omit production
+files or alter the coverage denominator to work around an export failure.
