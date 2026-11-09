@@ -19,17 +19,24 @@ fn empty_and_default_instances_have_exact_zero_totals() {
 #[test]
 fn supplied_example_returns_exact_strings_and_combined_quantities() {
     let mut cart = BrowserCart::new();
-    for (product, price) in [("cornflakes", "2.52"), ("cornflakes", "2.52"), ("weetabix", "9.98")] {
+    for (product, price) in [
+        ("cornflakes", "2.52"),
+        ("cornflakes", "2.52"),
+        ("weetabix", "9.98"),
+    ] {
         let result = add(&mut cart, product, "1", &format!(r#"{{"price":{price}}}"#));
         assert_eq!(result["ok"], true);
         assert!(result["error"].is_null());
     }
-    assert_eq!(snapshot(&cart), json!({
-        "items": [
-            {"product": "cornflakes", "quantity": 2, "unit_price": "2.52", "line_total": "5.04"},
-            {"product": "weetabix", "quantity": 1, "unit_price": "9.98", "line_total": "9.98"}
-        ], "subtotal": "15.02", "tax": "1.88", "total": "16.90"
-    }));
+    assert_eq!(
+        snapshot(&cart),
+        json!({
+            "items": [
+                {"product": "cornflakes", "quantity": 2, "unit_price": "2.52", "line_total": "5.04"},
+                {"product": "weetabix", "quantity": 1, "unit_price": "9.98", "line_total": "9.98"}
+            ], "subtotal": "15.02", "tax": "1.88", "total": "16.90"
+        })
+    );
 }
 
 #[test]
@@ -37,7 +44,19 @@ fn quantity_strings_cannot_wrap_or_silently_truncate() {
     let mut cart = BrowserCart::new();
     add(&mut cart, "cornflakes", "1", r#"{"price":2.52}"#);
     let before = snapshot(&cart);
-    for quantity in ["", "0", "-1", "+1", "1.5", "1e3", " 1", "1 ", "NaN", "4294967296", "１２"] {
+    for quantity in [
+        "",
+        "0",
+        "-1",
+        "+1",
+        "1.5",
+        "1e3",
+        " 1",
+        "1 ",
+        "NaN",
+        "4294967296",
+        "１２",
+    ] {
         let result = add(&mut cart, "cornflakes", quantity, r#"{"price":2.52}"#);
         assert_eq!(result["ok"], false, "{quantity}");
         assert!(result["error"].as_str().unwrap().contains("quantity"));
@@ -82,9 +101,14 @@ fn malformed_and_invalid_prices_leave_the_cart_unchanged() {
     add(&mut cart, "cornflakes", "1", r#"{"price":2.52}"#);
     let before = snapshot(&cart);
     for response in [
-        "not-json", "[2.52]", "{}", r#"{"price":"2.52"}"#,
+        "not-json",
+        "[2.52]",
+        "{}",
+        r#"{"price":"2.52"}"#,
         r#"{"price":{"$serde_json::private::Number":"2.52"}}"#,
-        r#"{"price":2.525}"#, r#"{"price":-1}"#, r#"{"price":1e2}"#,
+        r#"{"price":2.525}"#,
+        r#"{"price":-1}"#,
+        r#"{"price":1e2}"#,
         r#"{"price":2.52,"price":1.00}"#,
     ] {
         let result = add(&mut cart, "cornflakes", "1", response);

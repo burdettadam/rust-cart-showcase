@@ -1,0 +1,16 @@
+{
+  "source_commit": "ec44648742610fbbdd08384fae74814b915b03f2",
+  "source_tree": "f63ded27f77f3a1b2fd14fd867394213f3290aad",
+  "algorithm": "sha256",
+  "files": {
+    "Cargo.lock": "1f4db6a5bc4d7aba0da2e25ec49fb724fe9612eccd0a3c562f36f138bb9f9f02",
+    "Cargo.toml": "7b72265ab8c7df4caafc92b86f9970ec96a36ae8a2fabbfba5e70eaaa0ce7cf3",
+    "src/cart.rs": "b48716ad10dad2ff8d3e77550b8ccb8a449f9a2cccf7d78ae87ece9b5cb5f4a8",
+    "src/http_price_client.rs": "7fc7bab86a22f6ff72f63a5ee3f09b0459e41799545e6eda0c97a332f8c648db",
+    "src/lib.rs": "0fd563159ada2a41cec834a4fe2b1555dbf26d01a5c458e19ad8adbadb3e9212",
+    "src/price_response.rs": "f836b0ab73ea97697be576fbc3201edd7ae978da9652f4031c8c0f10b131b707",
+    "tests/cart.rs": "d8bd401f1b031d99c5639bd1c62f9ad33950d21e93bc1f46d33ce4217f89ffc2",
+    "tests/http_price_client.rs": "ddc6a5eb7dd87a5af499f539c2d5aab6ae9f79ea20065a752ee71113a35bf529",
+    "tests/price_response.rs": "e776d03b191be31da8e3779c9d5b604b79608bc88d630f329309ee6ad8f3579f"
+  }
+}
