@@ -102,6 +102,7 @@ fn malformed_and_invalid_prices_leave_the_cart_unchanged() {
     let before = snapshot(&cart);
     for response in [
         "not-json",
+        "\u{feff}{\"price\":2.52}",
         "[2.52]",
         "{}",
         r#"{"price":"2.52"}"#,

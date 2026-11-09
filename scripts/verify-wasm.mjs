@@ -25,7 +25,7 @@ try {
     for (const [quantity, body] of [
       ['-1', '{"price":2.52}'], ['1.5', '{"price":2.52}'], ['4294967296', '{"price":2.52}'],
       ['1', '{"price":2.525}'], ['1', '[2.52]'], ['1', '{"price":{"$serde_json::private::Number":"2.52"}}'],
-      ['1', '{"price":2.52,"price":1.00}'], ['1', ' '.repeat(16385)]
+      ['1', '{"price":2.52,"price":1.00}'], ['1', '\uFEFF{"price":2.52}'], ['1', ' '.repeat(16385)]
     ]) {
       const result = add('cornflakes', quantity, body);
       assert.equal(result.ok, false);
