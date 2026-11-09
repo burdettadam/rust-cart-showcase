@@ -1,0 +1,8 @@
+/target/
+/dist/
+/.evidence/
+/node_modules/
+/.openai/
+*.log
+__pycache__/
+*.pyc
