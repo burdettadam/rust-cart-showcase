@@ -14,10 +14,10 @@ account inventory exposed only ElevenID and no personal repositories. This is
 an access/identity constraint, not proof that the user's fork does not exist.
 No remote repository, hosted PR, merge or Pages deployment is fabricated.
 
-A task-specific Rust1.97.1 toolchain, wasm32 target, llvm-tools, cargo-llvm-cov0.6.21
-and wasm-bindgen0.2.130 were made available. Official wasm-bindgen and GitHub Pages
+A task-specific Rust 1.97.1 toolchain, wasm32 target, llvm-tools, cargo-llvm-cov 0.6.21
+and wasm-bindgen 0.2.130 were made available. Official wasm-bindgen and GitHub Pages
 documentation informed the browser loading and deployment workflow. All five
-public price fixtures returned200 with CORS permission during a live research
+public price fixtures returned 200 with CORS permission during a live research
 check; deterministic tests do not rely on their ongoing availability.
 
 The library portability branch feature-gates native HTTP and shares strict JSON

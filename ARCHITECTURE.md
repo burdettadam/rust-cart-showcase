@@ -1,13 +1,15 @@
 # Architecture authority
 
-The companion calls the original Rust shopping-cart library through a small
-WASM binding. Rust owns validation, quantity, pricing, state and totals. JavaScript
-owns the DOM and asynchronous browser HTTP. Raw response text crosses the boundary;
-decimal amounts return as strings. No JavaScript floating-point money arithmetic.
+The maintained design and interview Q&A is
+[docs/architecture/README.md](docs/architecture/README.md).
 
-`vendor/shopping-cart` is an exported, pinned source snapshot. The original library
-remains the only maintained rule implementation; update the snapshot using the
-export tool and verify its manifest instead of hand-editing it. The showcase
-ships independently of the library-only challenge submission.
+The companion calls the original Rust shopping-cart library through a small WASM
+binding. Rust owns validation, quantities, pricing, state and totals. JavaScript
+owns DOM rendering and asynchronous browser HTTP. Raw response text crosses the
+boundary; decimal amounts return as strings.
 
-Detailed design, tradeoffs and interview Q&A will accompany the implementation.
+`vendor/shopping-cart` is a pinned exact source export. The original project
+remains the canonical owner of business rules. Update it through the exporter,
+verify its manifest, and rerun checks. The showcase is separate from the
+library-only challenge submission. Accepted scope and actual verification state
+are recorded in `PLANS.md` and `HANDOFF.md` respectively.
