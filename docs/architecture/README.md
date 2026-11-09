@@ -31,13 +31,14 @@ preserves both purposes. The companion is independently buildable and contains a
 pinned export of the library's Cargo inputs, source and tests. The original
 assignment and private completion link are not exported or deployed.
 
-This is deliberate source vendoring while the actual GitHub fork is inaccessible.
+This is deliberate source vendoring from the private library fork into the
+independently buildable public companion.
 A full source commit and file hashes make the relationship auditable. It does
 create an explicit update step; `verify_vendor.py` rejects missing, added or
 changed files relative to that manifest. The manifest is a consistency check,
 not a signature or independent proof of trust. Reviewers compare it to the
-retained source commit. Once the original repository is accessible, a pinned Git
-dependency is an alternative if the Pages build has appropriate access. Neither
+retained source commit. A pinned Git dependency is an alternative if the Pages
+build has appropriate private repository access. Neither
 approach justifies force-pushing unrelated Git history.
 
 ## Questions and answers

@@ -32,7 +32,10 @@ unavailable. No weakening these criteria to make a candidate pass.
 
 ## Transparency and recovery
 
-Author AI-generated commits as ChatGPT (AI). Distinguish source checkpoints,
+Identify AI-generated commits honestly. Native commits use ChatGPT (AI). GitHub
+API imports may use the authorized account's commit identity; their messages must
+identify the AI-generated import and original source author and commit. That
+identity does not imply that the user wrote the code. Distinguish source checkpoints,
 executed local checks, hosted CI, independent reviews, user approval, deployment
 and submission. Keep a recoverable source archive and Git bundle while no remote
 is available. Native GitHub protections are unverified until observed.

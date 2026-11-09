@@ -37,8 +37,16 @@ Assigned UI work uses a distinct worktree. Independent reviewers do not edit the
 candidate. Topic commits may be assembled on an integration feature branch;
 `main` merge remains the user's decision.
 
-GitHub currently returns 404 for the inferred personal fork, and repository
-inventory exposes no personal repositories. No remote is configured. Finish a
-reviewable local candidate and preserve it before requesting the exact accessible
-showcase repository. Never force-push unrelated local history over an existing
-repository, invent a PR or claim an unobserved Pages deployment.
+The user created the public
+[`burdettadam/rust-cart-showcase`](https://github.com/burdettadam/rust-cart-showcase)
+repository on 2026-11-09 and authorized the GitHub connection for it and the
+private library fork. Its initial `main` commit is
+`0ec8238570b597cee798229eaae3aab446cdb057`. `feat/wasm-showcase` imports the reviewed
+companion onto that real base; the original local histories remain in the saved
+archives. GitHub API import messages identify AI origin and original source
+author/SHA rather than claiming human authorship from the account identity.
+
+Renew checks and two independent reviews against the actual integrated candidate,
+then present the real PR for the user's merge decision. Preserve main-only Pages
+deployment and observe its actual result after an approved merge. Never force-push
+unrelated local history, invent a PR or claim an unobserved deployment.

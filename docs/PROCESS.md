@@ -61,3 +61,31 @@ invalid quantity, a large exact decimal, mode reset and a real live price reques
 A 375px content viewport also exercised the project-subpath build. These checks
 establish observed behavior in that browser; they are not cross-browser testing,
 human review, hosted CI or a GitHub Pages deployment.
+
+## 2026-11-09: prepare the public GitHub review branch
+
+The browser-created public companion is `burdettadam/rust-cart-showcase`, whose
+initial `main` commit is `0ec8238570b597cee798229eaae3aab446cdb057`. The user
+authorized GitHub app access to this repository and the private assignment fork.
+The `feat/wasm-showcase` branch integrates the existing showcase increments onto
+that real GitHub ancestry for one review PR into `main`.
+
+GitHub API publication uses the authenticated publisher's identity. Import commit
+messages retain `AI-Generated-By`, `Original-Author` and `Original-Commit` trailers;
+the complete original local histories remain in the saved archives. This
+attribution distinguishes publication from human authorship or approval.
+
+One historical artifact cleanup is explicit: original commit `ca80dd2` briefly
+tracked four generated `scripts/__pycache__/*.pyc` files, which `6e02f9f` removed.
+The public replay omits those bytecode files from the intermediate history. The
+original archive retains that history, and the final reviewed source tree was
+already free of those files before the documentation reconciliation. No business
+logic or tests were changed by this omission.
+
+The archived coverage, WASM checks and browser observations remain historical
+evidence. The integrated candidate needs fresh checks, independent reviews and
+actual PR/CI links before a human merge decision. The existing main-only Pages
+upload and deployment conditions remain unchanged. Repository creation and app
+access do not establish a successful deployment; the resulting Pages URL must be
+observed and reviewed separately. Publishing this companion does not submit the
+coding challenge.

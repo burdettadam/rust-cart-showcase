@@ -23,12 +23,15 @@ challenge solution.
 
 ## Evidence for review
 
-The delivered verification report identifies the exact final candidate and every
-command/log/hash. Corrected implementation checks passed 53 native tests, 1 doctest,
+The retained archive verification identifies source
+`fb486cd99b99a8a34e476aded6af3a5f5d72eeb7` and every command/log/hash. Its corrected
+implementation checks passed 53 native tests, 1 doctest,
 24 JavaScript tests and 8 actual-WASM checks. Production Rust coverage is 213/219
 (97.26%), with tests/dependencies excluded and all production included.
 Browser QA exercised the reference result, errors, live requests, narrow layout
-and a project subpath. Hosted CI and Pages publication remain unverified.
+and a project subpath. These are historical results. Fresh integrated-candidate
+verification, independent reviews and hosted CI must be bound to the real PR
+head/base; no new hosted result is claimed by this draft.
 
 Initial independent findings and red/green regressions are retained: the library's
 native response limit and browser BOM handling were corrected. Final contract and
@@ -37,8 +40,19 @@ do not replace the user's human merge judgment.
 
 ## Publication and human decision
 
-This is a prepared description, not an existing GitHub PR. The connection cannot
-currently resolve the personal fork. Supply the intended accessible companion
-repository, preserve its ancestry, and open the real feature PR. The user reviews
-and decides the merge. Pages must use GitHub Actions as its source, and the actual
-deployment URL must come from a successful observed deployment.
+Repository: `burdettadam/rust-cart-showcase`. Review branch: `feat/wasm-showcase`;
+target: `main`. Initial GitHub base:
+`0ec8238570b597cee798229eaae3aab446cdb057`.
+
+The review branch imports the saved increments on the actual repository ancestry.
+GitHub API import messages identify AI origin and original author/source SHA;
+the authorized account identity does not imply human coding. The saved archives
+preserve the original full histories. Public replay omits temporary Python
+bytecode from one historical intermediate commit; the reviewed final source
+already excluded those files.
+
+This remains a prepared description until linked to an actual GitHub PR. The user
+reviews the current checks and two independent reviews and decides the merge.
+Pages must use GitHub Actions as its source; deployment stays restricted to
+`main`, and its URL must come from a successful observed deployment. Neither
+source publication nor Pages deployment submits the challenge.

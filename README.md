@@ -47,17 +47,21 @@ The workflow `.github/workflows/pages.yml` builds and tests pull requests. On
 GitHub Pages environment. All asset URLs are relative, including WASM loading,
 so both a user site and a `/repository-name/` project site are supported.
 
-1. Put this **companion repository** on the intended GitHub account. Preserve an
-   existing repository's ancestry; never force-push this independent local root.
+1. Review this **companion repository** at
+   [`burdettadam/rust-cart-showcase`](https://github.com/burdettadam/rust-cart-showcase).
+   Feature work preserves its actual GitHub ancestry.
 2. In Settings → Pages, select **GitHub Actions** as the publishing source.
+   This repository was configured that way on 2026-11-09.
 3. Open the feature PR, review its checks and both independent reviews, and make
    the human merge decision. A merge into `main` triggers the Pages workflow.
 4. Observe a successful deployment and use the URL returned by GitHub. Do not
    infer success merely from a green local build.
 
-The current connection cannot resolve the expected personal fork and exposes no
-personal repositories. The current handoff records actual access and deployment
-status. No GitHub URL, PR number or hosted result has been invented.
+The repository was created on 2026-11-09, and the user authorized the GitHub
+connection for it and the private library fork. `feat/wasm-showcase` is the review
+branch. The current handoff and actual PR/CI records identify publication and
+verification status. A repository or configured workflow alone does not establish
+a successful build, human approval or live Pages site.
 
 ## Quality and source provenance
 
@@ -86,6 +90,10 @@ source file. These are exact copies, not a reimplementation. The exporter includ
 only Cargo inputs, Rust source and tests. It excludes the original assignment,
 private completion link, governance and review evidence. The original project
 remains the canonical place to change business rules.
+
+The current export uses published library commit
+`c0f6aa90e06c1dfb7692b14d287e9d95da6221dc`. That repository is private; the
+companion remains independently buildable without its credentials.
 
 To update the snapshot after reviewing a new library candidate:
 

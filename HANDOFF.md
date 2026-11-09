@@ -1,5 +1,40 @@
 # WebAssembly showcase handoff
 
+## Current GitHub integration: 2026-11-09
+
+The public repository is
+[`burdettadam/rust-cart-showcase`](https://github.com/burdettadam/rust-cart-showcase),
+created with initial `main` commit `0ec8238570b597cee798229eaae3aab446cdb057`.
+The user authorized the GitHub connection for this repository and the private
+library fork. `feat/wasm-showcase` is the combined review branch on that actual
+GitHub base, importing the archived companion checkpoint
+`fb486cd99b99a8a34e476aded6af3a5f5d72eeb7` and its meaningful increments.
+
+GitHub API import messages identify the AI-generated work and original source
+author/SHA. Their authorized account identity does not imply human coding or
+review. The saved archives preserve the original full local histories. The
+public replay omits the transient Python bytecode files from an early historical
+commit; those generated files were already absent from the reviewed final tree.
+
+Publication is being reconciled with the real repositories. Fresh exact-candidate
+checks, independent reviews, hosted PR/CI results and human merge review must be
+recorded separately as integration completes. No new measured result, hosted PR
+number or live Pages deployment is claimed by this documentation checkpoint.
+The sections below retain evidence for the archived source; those results do not
+automatically apply to a new GitHub commit.
+
+The prepared current PR description is `docs/pull-requests/01-wasm-showcase.md`.
+Pages remains configured in source to deploy only after the full quality gate on
+`main`; the user retains the merge decision. Settings → Pages was set to GitHub
+Actions on 2026-11-09. The live URL must still come from an observed successful
+deployment.
+
+The current source export pins the published private library candidate
+`c0f6aa90e06c1dfb7692b14d287e9d95da6221dc`, tree
+`273b3daf46c960c3635072f77e7af45a322a42d1`. Its nine exported Cargo/source/test
+files are byte-for-byte identical to the archived export. Only the provenance
+commit and tree changed; the publication documentation is outside that export.
+
 ## Implemented outcome
 
 Rust Cart Lab is a separate, independently buildable companion to the shopping-cart
@@ -7,17 +42,18 @@ library. It runs the real library through WebAssembly, supplies sample/live pric
 modes, shows exact cart snapshots and demonstrates rounding, repricing, validation
 and reset. GitHub Pages workflow and static artifact are prepared.
 
-The original library source is pinned to
+The archived companion pinned its original library source to
 `7b2513643e51668e9caae9d88a6b3a7ba03e34f3`. Its cart algorithm remains unchanged
 from the original reviewed candidate. The source export contains nine exact files;
 `vendor/provenance.json` and the exporter make that relationship inspectable.
 
-The source is on `feat/wasm-showcase`. `main` is the companion's initial workflow
-baseline; feature topics have not been merged into it. Git is authoritative for
-current source identity. The final delivery report and build-info.json bind the
-reviewed source, actual artifact and retained evidence to full commit identities.
+In the archived project, source was on `feat/wasm-showcase` and `main` held the
+initial workflow baseline. The GitHub repository has the separate actual base
+identified above. Git is authoritative for current source identity. The retained
+final archive evidence identifies `fb486cd99b99a8a34e476aded6af3a5f5d72eeb7`;
+build-info.json identifies the source and core used for each generated artifact.
 
-## Executed verification
+## Retained archive verification
 
 The complete corrected implementation passed eleven maintained checks on clean
 commit `4fb2bd009b189fb3ccb85463dfc3964c19269feb`. The final documentation checkpoint
@@ -74,16 +110,15 @@ compiler output outside the synchronized tree via CARGO_TARGET_DIR eliminated
 the race; the complete eleven-check run then passed. Build scripts obtain the
 target directory from Cargo metadata and support this without source changes.
 
-## External state and next action
+## Historical access limitation and next action
 
-The GitHub connection returned 404 for the inferred personal fork and exposes only
-the ElevenID installation, with no personal repositories in the current inventory.
-No showcase remote, hosted PR, hosted CI, main merge or Pages deployment has
-occurred. This does not prove that the user's fork does not exist.
+Before 2026-11-09, the GitHub connection returned 404 for the inferred personal
+fork and exposed only the ElevenID installation. At that checkpoint no showcase
+remote, hosted PR, hosted CI, main merge or Pages deployment had occurred. The
+browser discovery and selected-repository authorization resolved the access
+limitation; they did not grant merge approval or establish deployment health.
 
-The concrete remaining input is the intended showcase repository URL with access
-through the GitHub connection. Inspect existing ancestry, push a feature branch,
-open the prepared PR, and let the user make the merge decision. Enable Settings
-→ Pages → GitHub Actions, then observe deployment and its actual URL. Never
-force-push this independently initialized history over an existing repository.
-The original challenge completion link has not been activated.
+Finish the integrated candidate, bind current checks and reviews to the actual
+PR, and let the user decide its merge into `main`. Then observe the authorized
+Pages deployment and its real URL. The original challenge completion action
+remains separate and has not been activated.

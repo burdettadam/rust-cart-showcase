@@ -13,6 +13,14 @@ tests and project documentation**. Vendored library code originates in the same
 AI-assisted project and retains its own disclosure. This estimate does not turn
 user direction into a claim of manual authorship.
 
+The 2026-11-09 GitHub integration imports the saved source onto the new companion
+repository's actual base. GitHub API commits may carry the authorized account's
+identity; import messages identify the AI-generated work, original source author
+and source SHA. Original histories remain in the saved archives. Public replay
+omits transient historical Python bytecode that was already removed from the
+reviewed final source. Neither import mechanics nor human review changes the
+origin of generated implementation.
+
 Review uses executable native tests, measured Rust coverage, actual compiled-WASM
 checks, browser transport/session tests, artifact checks and two independent AI
 reviews with distinct assignments. Actual browser and hosted verification are

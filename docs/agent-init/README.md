@@ -26,6 +26,8 @@ available collaboration runtime and the maintained review guides. Configuration,
 actual review execution, GitHub protections and hosted CI remain separate facts.
 
 GitHub Pages deployment is part of this companion's scope. The original library's
-non-deployed scope remains in its own repository. No remote is configured here
-until the exact authorized repository is available. A local commit and saved
-source archive are not a hosted PR or a successful Pages deployment.
+non-deployed scope remains in its own repository. The user authorized the actual
+`burdettadam/rust-cart-showcase` repository on 2026-11-09. Current source publication
+and verification belong in `HANDOFF.md` and actual PR/CI records. A local commit,
+saved source archive or granted access is not a hosted PR or a successful Pages
+deployment.

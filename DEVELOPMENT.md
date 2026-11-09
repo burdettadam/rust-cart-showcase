@@ -56,9 +56,13 @@ and grants Pages-write/OIDC permissions only to the deployment job. The build
 job has repository/Pages read permissions for checkout and Pages metadata. Source
 repository Settings → Pages must select GitHub Actions before deployment.
 
-Current GitHub access is recorded in `HANDOFF.md`. Do not invent repository
-identity or overwrite an existing fork's history. Until access is resolved,
-retain standalone source checkouts, Git bundles and evidence in the deliverable.
+The authorized repository is
+[`burdettadam/rust-cart-showcase`](https://github.com/burdettadam/rust-cart-showcase).
+The review branch is `feat/wasm-showcase`, targeting `main` on its actual GitHub
+ancestry. Current publication and verification are recorded in `HANDOFF.md` and
+actual PR/CI records. Keep the original saved histories and evidence; GitHub API
+imports identify their AI origin and original source author/SHA. Do not overwrite
+existing history or confuse retained archive checks with fresh PR verification.
 Generated `target`, `dist`, caches and `.evidence` are not tracked in Git.
 
 ## Recovery
