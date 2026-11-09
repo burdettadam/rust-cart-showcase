@@ -43,17 +43,32 @@ jobs:
           cargo test --locked -p equal-experts-shopping-cart --no-default-features --all-targets
       - name: Browser transport and session tests
         run: node --test tests/*.test.mjs
+      - name: Release artifact verification tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py'
+      - name: Cache pinned coverage and WASM binding tools
+        id: rust-tools-cache
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            ~/.cargo/bin/cargo-llvm-cov
+            ~/.cargo/bin/wasm-bindgen
+          key: rust-tools-${{ runner.os }}-${{ runner.arch }}-ubuntu24-${{ hashFiles('rust-toolchain.toml') }}-llvm-cov-0.6.21-wasm-bindgen-0.2.130
       - name: Install pinned coverage and WASM binding tools
+        if: steps.rust-tools-cache.outputs.cache-hit != 'true'
         run: |
           cargo install cargo-llvm-cov --locked --version 0.6.21
           cargo install wasm-bindgen-cli --locked --version 0.2.130
+      - name: Verify pinned coverage and WASM binding tools
+        run: |
+          test "$(cargo llvm-cov --version)" = "cargo-llvm-cov 0.6.21"
+          test "$(wasm-bindgen --version)" = "wasm-bindgen 0.2.130"
       - name: Require at least 91 percent production Rust line coverage
         run: cargo llvm-cov --locked --workspace --all-targets --ignore-filename-regex '/tests/' --fail-under-lines 91
       - name: Build and execute the actual WebAssembly artifact
         run: |
           python3 scripts/build.py
           node scripts/verify-wasm.mjs
-          python3 scripts/verify_dist.py
+          python3 scripts/verify_dist.py --release
       - name: Configure Pages
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0

@@ -25,7 +25,8 @@ try {
     for (const [quantity, body] of [
       ['-1', '{"price":2.52}'], ['1.5', '{"price":2.52}'], ['4294967296', '{"price":2.52}'],
       ['1', '{"price":2.525}'], ['1', '[2.52]'], ['1', '{"price":{"$serde_json::private::Number":"2.52"}}'],
-      ['1', '{"price":2.52,"price":1.00}'], ['1', '\uFEFF{"price":2.52}'], ['1', ' '.repeat(16385)]
+      ['1', '{"price":2.52,"price":1.00}'], ['1', '\uFEFF{"price":2.52}'], ['1', ' '.repeat(16385)],
+      ['1', '{"price":2.5200e0}'], ['1', `{"price":0.01${'0'.repeat(60)}1}`]
     ]) {
       const result = add('cornflakes', quantity, body);
       assert.equal(result.ok, false);
@@ -52,6 +53,16 @@ try {
     const result = add('sample', '1', '{"price":90071992547409.91}');
     assert.equal(result.snapshot.subtotal, '90071992547409.91');
     assert.equal(result.snapshot.total, '101330991615836.15');
+  });
+  check('insignificant trailing zeros preserve exact cents through compiled WASM', () => {
+    for (const [price, total] of [['2.52', '2.84'], ['0.00', '0.00'], ['90071992547409.91', '101330991615836.15']]) {
+      cart.reset();
+      const result = add('sample', '1', `{"price":${price}${'0'.repeat(60)}}`);
+      assert.equal(result.ok, true, result.error);
+      assert.equal(result.snapshot.items[0].unit_price, price);
+      assert.equal(result.snapshot.subtotal, price);
+      assert.equal(result.snapshot.total, total);
+    }
   });
   check('overflow is a returned error, not a WASM trap', () => {
     cart.reset();

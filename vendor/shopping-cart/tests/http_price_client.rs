@@ -44,7 +44,12 @@ fn preserves_exact_cents_at_a_value_binary_floating_point_cannot_represent() {
 
 #[test]
 fn accepts_free_whole_number_and_trailing_zero_prices() {
-    for (literal, expected) in [("0", "0.00"), ("2", "2.00"), ("2.5200", "2.52")] {
+    for (literal, expected) in [
+        ("0", "0.00"),
+        ("2", "2.00"),
+        ("2.5200", "2.52"),
+        ("2.52000000000000000000000000000", "2.52"),
+    ] {
         let mut server = mockito::Server::new();
         let request = server
             .mock("GET", "/cornflakes.json")
@@ -105,6 +110,7 @@ fn rejects_malformed_json_and_missing_or_non_numeric_price_fields() {
         r#"{"price":"2.52"}"#,
         r#"{"price":[]}"#,
         r#"{"price":2.52} trailing garbage"#,
+        "\u{feff}{\"price\":2.52}",
     ] {
         let mut server = mockito::Server::new();
         let request = server
@@ -121,6 +127,25 @@ fn rejects_malformed_json_and_missing_or_non_numeric_price_fields() {
         );
         assert!(error.source().is_some());
         assert!(error.to_string().contains("price response"));
+        request.assert();
+    }
+}
+
+#[test]
+fn rejects_invalid_utf8_in_otherwise_valid_response_metadata() {
+    for content_type in ["application/json", "text/plain; charset=utf-8"] {
+        let mut server = mockito::Server::new();
+        let request = server
+            .mock("GET", "/cornflakes.json")
+            .with_header("content-type", content_type)
+            .with_body(b"{\"title\":\"\xff\",\"price\":2.52}")
+            .create();
+        let client = HttpPriceClient::with_base_url(server.url());
+
+        let error = client.unit_price("cornflakes").unwrap_err();
+
+        assert!(matches!(&error, PriceClientError::Response(_)));
+        assert!(error.source().is_some());
         request.assert();
     }
 }
@@ -212,6 +237,38 @@ fn rejects_negative_fractional_cent_and_out_of_range_prices() {
         assert!(matches!(&error, PriceClientError::InvalidPrice(value) if value == literal));
         assert!(error.to_string().contains("exact cents"));
         request.assert();
+    }
+}
+
+#[test]
+fn invalid_prices_leave_an_existing_cart_unchanged() {
+    for literal in [
+        "1.0010000000000000000000000000000000000000",
+        "184467440737095516.1600000000000000000000",
+        "2.52000000000000000000000000000e0",
+    ] {
+        let mut server = mockito::Server::new();
+        let cornflakes = server
+            .mock("GET", "/cornflakes.json")
+            .with_body(r#"{"price":2.52}"#)
+            .create();
+        let weetabix = server
+            .mock("GET", "/weetabix.json")
+            .with_body(format!(r#"{{"price":{literal}}}"#))
+            .create();
+        let mut cart = ShoppingCart::new(HttpPriceClient::with_base_url(server.url()));
+        cart.add("cornflakes", 1).unwrap();
+        let before = cart.snapshot();
+
+        let error = cart.add("weetabix", 2).unwrap_err();
+
+        assert!(matches!(
+            error,
+            CartError::PriceLookup(PriceClientError::InvalidPrice(value)) if value == literal
+        ));
+        assert_eq!(cart.snapshot(), before);
+        cornflakes.assert();
+        weetabix.assert();
     }
 }
 
@@ -369,6 +426,39 @@ fn actual_http_failure_does_not_change_an_existing_cart() {
         error,
         CartError::PriceLookup(PriceClientError::HttpStatus(500))
     ));
+    assert_eq!(cart.snapshot(), before);
+    cornflakes.assert();
+    weetabix.assert();
+}
+
+#[test]
+fn interrupted_response_body_does_not_change_an_existing_cart() {
+    let mut server = mockito::Server::new();
+    let cornflakes = server
+        .mock("GET", "/cornflakes.json")
+        .with_body(r#"{"price":2.52}"#)
+        .create();
+    let weetabix = server
+        .mock("GET", "/weetabix.json")
+        .with_chunked_body(|writer| {
+            writer.write_all(br#"{"price":9.98}"#)?;
+            Err(std::io::Error::new(
+                std::io::ErrorKind::UnexpectedEof,
+                "fixture interrupted its response",
+            ))
+        })
+        .create();
+    let mut cart = ShoppingCart::new(HttpPriceClient::with_base_url(server.url()));
+    cart.add("cornflakes", 1).unwrap();
+    let before = cart.snapshot();
+
+    let error = cart.add("weetabix", 1).unwrap_err();
+
+    assert!(matches!(
+        &error,
+        CartError::PriceLookup(PriceClientError::Response(_))
+    ));
+    assert!(error.source().is_some());
     assert_eq!(cart.snapshot(), before);
     cornflakes.assert();
     weetabix.assert();

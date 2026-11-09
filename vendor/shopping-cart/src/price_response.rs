@@ -24,6 +24,7 @@ struct PriceResponse {
 
 /// Parses a bounded JSON object containing an ordinary decimal numeric `price`.
 /// Significant fractional cents, exponent notation and out-of-range values fail.
+/// Insignificant fractional zeros do not consume decimal precision.
 /// Callers must bound network reads before allocating the response body.
 pub fn parse_price_response(body: &str) -> Result<Decimal, PriceResponseError> {
     if body.len() > MAX_PRICE_RESPONSE_BYTES {
@@ -43,7 +44,15 @@ pub fn parse_price_response(body: &str) -> Result<Decimal, PriceResponseError> {
     {
         return Err(response_shape_error("price must be a JSON number"));
     }
-    let price = Decimal::from_str_exact(raw_price)
+    if raw_price.contains(['e', 'E']) {
+        return Err(PriceResponseError::InvalidPrice(raw_price.to_owned()));
+    }
+    let normalized_price = if raw_price.contains('.') {
+        raw_price.trim_end_matches('0').trim_end_matches('.')
+    } else {
+        raw_price
+    };
+    let price = Decimal::from_str_exact(normalized_price)
         .map_err(|_| PriceResponseError::InvalidPrice(raw_price.to_owned()))?;
     if price_in_cents(price).is_none() {
         return Err(PriceResponseError::InvalidPrice(raw_price.to_owned()));

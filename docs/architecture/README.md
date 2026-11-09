@@ -149,7 +149,14 @@ and calls the public price service directly. No server-side Rust process runs on
 Pages. Relative imports and the generated WASM initializer keep assets under the
 current project path. The workflow verifies and uploads only `dist`, then deploys
 that same artifact through the Pages environment. Settings must select GitHub
-Actions as the publishing source. A local build is not a hosted deployment.
+Actions as the publishing source. Release verification also requires the artifact's
+recorded showcase commit to match the checked-out commit, with a clean build and
+checkout. Local previews may include changes and are labeled accordingly. These
+checks make source identity explicit; a local build is not a hosted deployment.
+
+The page's View source and Architecture links use the recorded full showcase
+commit when valid metadata is available. Their public repository fallback keeps
+code inspection available without access to the original private library.
 
 ### 13. What makes the process honest and reviewable?
 

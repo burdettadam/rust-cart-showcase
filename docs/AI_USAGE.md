@@ -23,10 +23,17 @@ origin of generated implementation.
 
 Review uses executable native tests, measured Rust coverage, actual compiled-WASM
 checks, browser transport/session tests, artifact checks and two independent AI
-reviews with distinct assignments. Actual browser and hosted verification are
-reported separately in the handoff and evidence. User inspection, acceptance,
-merge approval and final challenge submission remain user decisions; they are
-never represented as completed merely because AI checks pass.
+reviews with distinct assignments. [HANDOFF](../HANDOFF.md) is the maintained
+entry point for actual candidate, browser, hosted verification and release
+records. [PROCESS](PROCESS.md) preserves the chronology and corrections.
+
+On 2026-11-09 the user explicitly authorized merging the baseline before personal
+code inspection, requested an audit, and subsequently approved its improvements.
+The follow-up work includes navigation, release-metadata validation, removal of
+unused session state, and documentation consolidation. These decisions do not
+establish that manual code inspection or understanding is complete. User review,
+acceptance, merge approval and final challenge submission remain distinct from
+AI checks and reviews.
 
 The companion is separate from the challenge's library-only submission. No
 assignment completion action is performed by the build or deployment workflow.

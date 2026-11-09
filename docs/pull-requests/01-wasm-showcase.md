@@ -1,5 +1,9 @@
 # Proposed PR: demonstrate the Rust cart through WebAssembly on GitHub Pages
 
+> **Historical draft, superseded by [actual PR #1](https://github.com/burdettadam/rust-cart-showcase/pull/1).**
+> The text below preserves its preparation checkpoint; pending actions and test
+> results are historical. Use [the current handoff](../../HANDOFF.md) for later work.
+
 ## Why
 
 The user wants an interactive way to explore and explain the library's behavior.

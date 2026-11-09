@@ -50,3 +50,17 @@ Renew checks and two independent reviews against the actual integrated candidate
 then present the real PR for the user's merge decision. Preserve main-only Pages
 deployment and observe its actual result after an approved merge. Never force-push
 unrelated local history, invent a PR or claim an unobserved deployment.
+
+## Accepted audit improvements: 2026-11-09
+
+The user requested implementation of all proposed improvements after the merged
+baseline audit. Add source and architecture links tied to the displayed build,
+remove unused response-body session state, and enforce source identity and a clean
+checkout during release-artifact verification. Keep explicitly labeled local
+previews usable. Re-export the reviewed library fixes rather than changing the
+vendored business rules independently.
+
+Refresh the README quickstart and live-site link, consolidate current status in
+`HANDOFF.md`, and preserve historical process and honest AI attribution. Retain
+all quality gates and two independent reviews. Main-only Pages deployment is the
+existing release path; challenge submission remains separately unauthorized.

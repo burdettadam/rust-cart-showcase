@@ -41,7 +41,6 @@ export class CartSession {
       busy: false,
       error: null,
       message: "Ready when you are. Add a product or run the reference example.",
-      lastBody: null,
     };
   }
 
@@ -60,7 +59,6 @@ export class CartSession {
     this.cancelPending();
     this.state.snapshot = JSON.parse(this.cart.reset());
     this.state.error = null;
-    this.state.lastBody = null;
     this.state.message = "Cart reset. Start a new example whenever you like.";
     this.emit();
   }
@@ -72,7 +70,6 @@ export class CartSession {
     this.state.mode = mode;
     this.state.snapshot = JSON.parse(this.cart.reset());
     this.state.error = null;
-    this.state.lastBody = null;
     this.state.message = mode === "live"
       ? "Live prices selected. The cart was cleared; each addition will request a fresh price."
       : "Sample prices selected. The cart was cleared; additions now use repeatable local prices.";
@@ -82,7 +79,6 @@ export class CartSession {
   apply(product, quantity, body) {
     const result = JSON.parse(this.cart.add(product, quantity, body));
     this.state.snapshot = result.snapshot;
-    this.state.lastBody = body;
     this.state.error = result.ok ? null : result.error;
     this.state.message = result.ok
       ? `Added ${quantity} × ${product}. Rust updated the cart.`
@@ -142,7 +138,6 @@ export class CartSession {
     this.cancelPending();
     this.state.mode = "sample";
     this.state.snapshot = JSON.parse(this.cart.reset());
-    this.state.lastBody = null;
     this.state.error = null;
     let accepted = true;
     for (const step of scenario.steps) {

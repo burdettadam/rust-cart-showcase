@@ -1,5 +1,9 @@
 # Process record
 
+Each section records its own checkpoint. [HANDOFF](../HANDOFF.md) is the single
+current-status entry point; the [historical handoff](history/HANDOFF-before-audit.md)
+preserves earlier continuation notes and measurements.
+
 ## 2026-11-08: functional WebAssembly showcase
 
 The user requested WebAssembly and GitHub Pages. The saved original project was
@@ -82,10 +86,35 @@ original archive retains that history, and the final reviewed source tree was
 already free of those files before the documentation reconciliation. No business
 logic or tests were changed by this omission.
 
-The archived coverage, WASM checks and browser observations remain historical
-evidence. The integrated candidate needs fresh checks, independent reviews and
-actual PR/CI links before a human merge decision. The existing main-only Pages
-upload and deployment conditions remain unchanged. Repository creation and app
-access do not establish a successful deployment; the resulting Pages URL must be
-observed and reviewed separately. Publishing this companion does not submit the
-coding challenge.
+At this preparation checkpoint, fresh integrated-candidate checks, independent
+reviews and actual PR/CI links were still required. The archive observations did
+not establish a hosted release. Main-only Pages upload and deployment conditions
+were preserved; the later observed outcome is recorded below. Publishing this
+companion does not submit the coding challenge.
+
+
+## 2026-11-09: merge, deploy and audit
+
+[Showcase PR #1](https://github.com/burdettadam/rust-cart-showcase/pull/1) merged at
+`8fa71a80f1c4a42dd7fa15620f18f902f5c7f801` with the reviewed source tree unchanged.
+[Pages run 42703860415](https://github.com/burdettadam/rust-cart-showcase/actions/runs/42703860415)
+successfully built and deployed that merge to
+[Rust Cart Lab](https://burdettadam.github.io/rust-cart-showcase/). Native checks,
+compiled-WASM execution, live browser observations and artifact identity were
+recorded separately in the release record.
+
+The user authorized merging before their personal code inspection and requested
+an audit while reviewing. That ordering is recorded explicitly; merge authorization
+does not imply completed human inspection. The audit found review-navigation
+friction, unused session state, and a standalone release-metadata validation gap.
+It did not demonstrate an incorrect deployed artifact or a cart-calculation defect.
+A separate core audit found an exact-cent price falsely rejected after a long
+insignificant-zero suffix; the original library remains the owner of that fix.
+
+The user then requested all proposed improvements. The companion follow-up adds
+source/architecture links, removes unused state, validates release metadata against
+a clean checkout, refreshes the exact core export, and consolidates documentation.
+Local previews keep their labeled dirty-source mode. [PR #2](https://github.com/burdettadam/rust-cart-showcase/pull/2)
+records the actual candidate, checks, independent reviews and merge outcome.
+[HANDOFF](../HANDOFF.md) links those current records without treating baseline
+coverage or the earlier deployment as fresh evidence for later changes.
