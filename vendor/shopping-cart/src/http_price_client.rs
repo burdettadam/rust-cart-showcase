@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use rust_decimal::Decimal;
-use serde_json::value::RawValue;
 use thiserror::Error;
 
 use crate::{
@@ -83,14 +82,15 @@ impl PriceProvider for HttpPriceClient {
             return Err(PriceClientError::HttpStatus(response.status().as_u16()));
         }
 
-        let body: Box<RawValue> = response
+        let body = response
             .body_mut()
             .with_config()
             // ureq needs one byte of lookahead to observe EOF at the accepted limit.
             .limit(MAX_PRICE_RESPONSE_BYTES as u64 + 1)
-            .read_json()
+            .lossy_utf8(false)
+            .read_to_string()
             .map_err(PriceClientError::Response)?;
-        parse_price_response(body.get()).map_err(|error| match error {
+        parse_price_response(&body).map_err(|error| match error {
             PriceResponseError::InvalidResponse(error) => PriceClientError::Response(error.into()),
             PriceResponseError::InvalidPrice(value) => PriceClientError::InvalidPrice(value),
         })

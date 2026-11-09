@@ -11,6 +11,7 @@ fn accepts_exact_prices_without_binary_float_conversion() {
         ("0", "0"),
         ("-0.00", "0"),
         ("2", "2"),
+        ("1200", "1200"),
         ("2.5200", "2.52"),
         ("184467440737095516.15", "184467440737095516.15"),
     ] {
@@ -19,6 +20,41 @@ fn accepts_exact_prices_without_binary_float_conversion() {
 
         assert_eq!(price, Decimal::from_str_exact(expected).unwrap());
     }
+}
+
+#[test]
+fn accepts_insignificant_zeros_beyond_decimal_representation_limits() {
+    for (literal, expected) in [
+        (format!("2.52{}", "0".repeat(27)), "2.52"),
+        (format!("0.{}", "0".repeat(128)), "0"),
+        (format!("-0.{}", "0".repeat(128)), "0"),
+        (
+            format!("184467440737095516.15{}", "0".repeat(128)),
+            "184467440737095516.15",
+        ),
+    ] {
+        let body = format!(r#"{{"price":{literal}}}"#);
+
+        assert_eq!(
+            parse_price_response(&body).unwrap(),
+            Decimal::from_str_exact(expected).unwrap()
+        );
+    }
+}
+
+#[test]
+fn bounds_the_original_body_before_ignoring_fractional_zeros() {
+    let document = r#"{"price":2.52}"#;
+    let zeros = "0".repeat(MAX_PRICE_RESPONSE_BYTES - document.len());
+    let body = format!(r#"{{"price":2.52{zeros}}}"#);
+
+    assert_eq!(body.len(), MAX_PRICE_RESPONSE_BYTES);
+    assert_eq!(parse_price_response(&body).unwrap(), Decimal::new(252, 2));
+
+    let oversized = format!(r#"{{"price":2.52{zeros}0}}"#);
+    let error = parse_price_response(&oversized).unwrap_err();
+    assert!(matches!(&error, PriceResponseError::InvalidResponse(_)));
+    assert!(error.to_string().contains("16 KiB"));
 }
 
 #[test]
@@ -82,6 +118,9 @@ fn rejects_invalid_money_and_retains_its_exact_numeric_token() {
         "184467440737095517",
         "79228162514264337593543950336",
         "0.01000000000000000000000000001",
+        "1.0010000000000000000000000000000000000000",
+        "-0.0100000000000000000000000000000000000000",
+        "184467440737095516.1600000000000000000000",
     ] {
         let body = format!(r#"{{"price":{literal}}}"#);
         let error = parse_price_response(&body).unwrap_err();
@@ -97,7 +136,14 @@ fn rejects_invalid_money_and_retains_its_exact_numeric_token() {
 
 #[test]
 fn rejects_exponent_notation_even_when_it_denotes_exact_cents() {
-    for literal in ["2.52e0", "252e-2", "1e-29", "1E2"] {
+    for literal in [
+        "2.52e0",
+        "252e-2",
+        "1e-29",
+        "1E2",
+        "2.52000000000000000000000000000E0",
+        "2.52000000000000000000000000000e+000",
+    ] {
         let body = format!(r#"{{"price":{literal}}}"#);
 
         assert!(matches!(
