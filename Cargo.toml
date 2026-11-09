@@ -1,0 +1,37 @@
+[package]
+name = "rust-cart-showcase"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "A WebAssembly companion to the Rust shopping-cart library"
+
+[workspace]
+members = ["vendor/shopping-cart"]
+resolver = "3"
+
+[lib]
+name = "cart_wasm"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+equal-experts-shopping-cart = { path = "vendor/shopping-cart", default-features = false }
+rust_decimal = { version = "=1.43.0", default-features = false, features = ["std"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+wasm-bindgen = "=0.2.130"
+
+[lints.rust]
+unsafe_code = "forbid"
+unused_must_use = "deny"
+
+[profile.release]
+lto = true
+opt-level = "s"
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+debug = 1
+
+[profile.test]
+debug = 1
