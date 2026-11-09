@@ -1,0 +1,44 @@
+# Accepted goal: Rust cart WebAssembly showcase
+
+The user requested a functional WebAssembly showcase on GitHub Pages on
+2026-11-08. Build a separate companion so the original assignment stays a
+library submission. The user retains design judgment, merge and submission
+decisions. ChatGPT supplies implementation and technical evidence.
+
+## Scope and accepted behavior
+
+- Execute the existing Rust cart rules in WebAssembly; no JavaScript money math.
+- Export a fixed, verified library source revision into `vendor/shopping-cart`.
+  Record file hashes and source commit; one maintained library owns the rules.
+- Provide deterministic example prices and optional live price API requests.
+- Preserve exact price text until Rust parses it. Display Rust-formatted totals.
+- Show addition, quantity combination, latest-price behavior, upward tax rounding,
+  and errors that leave state unchanged. Reset discards only the local demo cart.
+- Serialize operations; no late fetch may repopulate a reset or switched session.
+- Build relative static assets for a GitHub Pages project path.
+- Ship only `dist` to Pages. No assignment instructions, completion URL, private
+  evidence, or development files belong in that artifact.
+
+## Delivery slices
+
+1. Restore reviewed library and establish the companion's Git/agent baseline.
+2. Add feature-gated native HTTP and shared exact response parsing to the library
+   on its separate `feat/wasm-portability` branch.
+3. Add the Rust/WASM bridge, native tests and actual compiled-WASM smoke tests.
+4. Add an accessible responsive UI and meaningful transport/race tests.
+5. Add reproducible build, GitHub Pages workflow and architecture Q&A.
+6. Freeze source; execute quality and >=91% production Rust line coverage;
+   collect two independent reviews, at most three rounds; retain evidence.
+
+## Ownership and constraints
+
+The root agent owns Git administration, integration, bridge and deployment work.
+Assigned UI work uses a distinct worktree. Independent reviewers do not edit the
+candidate. Topic commits may be assembled on an integration feature branch;
+`main` merge remains the user's decision.
+
+GitHub currently returns 404 for the inferred personal fork, and repository
+inventory exposes no personal repositories. No remote is configured. Finish a
+reviewable local candidate and preserve it before requesting the exact accessible
+showcase repository. Never force-push unrelated local history over an existing
+repository, invent a PR or claim an unobserved Pages deployment.

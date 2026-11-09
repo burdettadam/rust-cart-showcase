@@ -1,0 +1,6 @@
+/target/
+/dist/
+/.evidence/
+/node_modules/
+/.openai/
+*.log

@@ -1,0 +1,18 @@
+# Native Codex project configuration; verify client support and effective trust.
+# https://learn.chatgpt.com/docs/config-file/config-reference
+# https://learn.chatgpt.com/docs/agent-configuration/subagents
+# Documentation checked 2026-10-10. Template 0.2.1.
+#
+# Model and reasoning effort deliberately inherit native effective defaults.
+# To bind an available model, set supported top-level model and
+# model_reasoning_effort keys together ABOVE the [agents] table.
+# Provider/auth routing and machine trust belong in supported machine settings;
+# never commit credentials. This file does not establish a permission boundary.
+
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 3
+# Capacity C excludes the primary thread. Reviewer requirement N and rounds R
+# are project policy in GOVERNANCE.md, not native config fields.
+# Optional supported per-subagent defaults: default_subagent_model and
+# default_subagent_reasoning_effort. Bind only after checking actual availability.
