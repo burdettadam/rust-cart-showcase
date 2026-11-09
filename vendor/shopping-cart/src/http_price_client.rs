@@ -86,7 +86,8 @@ impl PriceProvider for HttpPriceClient {
         let body: Box<RawValue> = response
             .body_mut()
             .with_config()
-            .limit(MAX_PRICE_RESPONSE_BYTES as u64)
+            // ureq needs one byte of lookahead to observe EOF at the accepted limit.
+            .limit(MAX_PRICE_RESPONSE_BYTES as u64 + 1)
             .read_json()
             .map_err(PriceClientError::Response)?;
         parse_price_response(body.get()).map_err(|error| match error {

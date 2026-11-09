@@ -274,6 +274,35 @@ fn malformed_base_url_returns_a_request_error_with_its_source() {
 }
 
 #[test]
+fn accepts_exact_response_byte_limit_and_rejects_one_more() {
+    let document = r#"{"price":2.52}"#;
+    for size in [16 * 1024 - 1, 16 * 1024, 16 * 1024 + 1] {
+        for leading in [false, true] {
+            let padding = " ".repeat(size - document.len());
+            let body = if leading {
+                format!("{padding}{document}")
+            } else {
+                format!("{document}{padding}")
+            };
+            let mut server = mockito::Server::new();
+            let request = server
+                .mock("GET", "/cornflakes.json")
+                .with_body(body)
+                .create();
+            let client = HttpPriceClient::with_base_url(server.url());
+            let result = client.unit_price("cornflakes");
+
+            if size <= 16 * 1024 {
+                assert_eq!(result.unwrap(), Decimal::new(252, 2));
+            } else {
+                assert!(matches!(result, Err(PriceClientError::Response(_))));
+            }
+            request.assert();
+        }
+    }
+}
+
+#[test]
 fn rejects_an_oversized_response_body() {
     let mut server = mockito::Server::new();
     let request = server
