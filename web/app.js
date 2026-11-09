@@ -10,6 +10,7 @@ const elements = {
   tax: byId("tax"),
   total: byId("total"),
   mobileTotal: byId("mobile-total"),
+  mobileBar: document.querySelector(".mobile-cart-bar"),
   snapshot: byId("snapshot-json"),
   status: byId("operation-status"),
   message: byId("operation-message"),
@@ -114,8 +115,11 @@ function render(state) {
   for (const item of snapshot.items) {
     const product = productsById.get(item.product) || { name: item.product, letter: item.product.slice(0, 1).toUpperCase(), color: "sage" };
     const row = node("li", "cart-line");
+    row.classList.toggle("has-long-amount", item.line_total.length > 12 || item.unit_price.length > 12);
     const info = node("div", "cart-line-info");
-    info.append(node("strong", "", product.name), node("span", "", `${item.quantity} × ${item.unit_price}`));
+    const quote = node("span", "cart-line-quote");
+    quote.append(node("span", "", `${item.quantity} ×`), node("span", "", item.unit_price));
+    info.append(node("strong", "", product.name), quote);
     row.append(productMark(product, "cart-line-mark"), info, node("span", "line-total", item.line_total));
     fragment.append(row);
   }
@@ -126,6 +130,10 @@ function render(state) {
   elements.tax.textContent = snapshot.tax;
   elements.total.textContent = snapshot.total;
   elements.mobileTotal.textContent = snapshot.total;
+  elements.subtotal.parentElement.classList.toggle("has-long-amount", snapshot.subtotal.length > 12);
+  elements.tax.parentElement.classList.toggle("has-long-amount", snapshot.tax.length > 12);
+  elements.total.parentElement.classList.toggle("has-long-amount", snapshot.total.length > 10);
+  elements.mobileBar.classList.toggle("has-long-amount", snapshot.total.length > 10);
   elements.snapshot.textContent = JSON.stringify(snapshot, null, 2);
 
   for (const control of document.querySelectorAll("[data-engine]")) control.disabled = !ready;
