@@ -129,13 +129,13 @@ function render(state) {
   elements.snapshot.textContent = JSON.stringify(snapshot, null, 2);
 
   for (const control of document.querySelectorAll("[data-engine]")) control.disabled = !ready;
-  for (const control of elements.products.querySelectorAll("button, input")) control.disabled = !ready || busy;
+  for (const control of elements.products.querySelectorAll("button, input")) control.disabled = !ready || busy || error === "engine";
   for (const control of elements.customForm.querySelectorAll("button, input, select, textarea")) {
-    control.disabled = !ready || busy || mode === "live";
+    control.disabled = !ready || busy || error === "engine" || mode === "live";
   }
 }
 
-function showLoadFailure(error) {
+function showLoadFailure(error, duringLoad = true) {
   ready = false;
   elements.engine.classList.remove("is-loading");
   elements.engine.classList.add("is-error");
@@ -144,11 +144,13 @@ function showLoadFailure(error) {
   elements.status.setAttribute("role", "alert");
   elements.status.setAttribute("aria-live", "assertive");
   elements.messageIcon.textContent = "!";
-  elements.message.textContent = "The WebAssembly module could not load. Reload the page to try again. A downloaded copy must be served over HTTP, rather than opened as a local file.";
+  elements.message.textContent = duringLoad
+    ? "The WebAssembly module could not load. Reload the page to try again. A downloaded copy must be served over HTTP, rather than opened as a local file."
+    : "The Rust engine could not recover. Reload the page to start a new cart.";
   elements.demo.setAttribute("aria-busy", "false");
   byId("reload-button").hidden = false;
   for (const control of document.querySelectorAll("[data-engine]")) control.disabled = true;
-  console.error("The Rust WebAssembly module could not load:", error);
+  console.error("The Rust WebAssembly engine is unavailable:", error);
 }
 
 async function loadBuildLabel() {
@@ -166,18 +168,22 @@ async function loadBuildLabel() {
 }
 
 createCatalog();
+function runCartAction(action) {
+  if (!ready) return;
+  try { action(); } catch (error) { showLoadFailure(error, false); }
+}
+
 for (const radio of document.querySelectorAll("input[name='price-mode']")) {
   radio.addEventListener("change", () => {
-    if (ready && radio.checked) session.setMode(radio.value);
+    if (radio.checked) runCartAction(() => session.setMode(radio.value));
   });
 }
 byId("reset-cart").addEventListener("click", () => {
-  if (ready) session.reset();
+  runCartAction(() => session.reset());
 });
 for (const button of document.querySelectorAll("[data-scenario]")) {
   button.addEventListener("click", () => {
-    if (!ready) return;
-    session.runScenario(button.dataset.scenario);
+    runCartAction(() => session.runScenario(button.dataset.scenario));
     elements.demo.scrollIntoView({ block: "start" });
   });
 }

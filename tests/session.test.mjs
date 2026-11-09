@@ -130,6 +130,19 @@ test("Rust rejection is rendered with Rust's unchanged snapshot", async () => {
   assert.match(session.state.message, /positive integer.*unchanged/);
 });
 
+test("an unexpected engine exception does not falsely promise an unchanged cart", async () => {
+  const cart = new RecordingCart();
+  const session = new CartSession(cart);
+  cart.add = () => { throw new Error("unexpected WASM failure"); };
+  assert.equal(await session.add("cornflakes", "1"), false);
+  assert.equal(session.state.error, "engine");
+  assert.match(session.state.message, /Reset the cart/);
+  assert.doesNotMatch(session.state.message, /unchanged/);
+  assert.equal(await session.add("cornflakes", "1"), false);
+  session.reset();
+  assert.equal(session.state.error, null);
+});
+
 test("custom responses stay verbatim and cannot be mixed into live mode", async () => {
   const cart = new RecordingCart();
   const session = new CartSession(cart);

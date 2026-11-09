@@ -36,12 +36,14 @@ cleanup prevents an old request from clearing a newer request's busy state.
 
 ## Evidence and limits
 
-The first browser-controller checkpoint passed 20 Node tests with Node 24.22.1.
+The browser-controller checkpoints passed 21 Node tests with Node 24.22.1.
 They exercise exact raw transport, HTTP failures, response byte boundaries,
 UTF-8 decoding, full-request timeout, external cancellation, quantity forwarding,
 serialized calls and reset/mode-change races. The controller double records
 calls and simulates envelopes; it deliberately does not reimplement money math.
 Actual Rust and compiled-WASM behavior is verified by the integration owner.
+Unexpected engine exceptions block further additions and request a reset without
+claiming the cart is unchanged; normal Rust rejections use the returned snapshot.
 
 Syntax checks were run for all three JavaScript modules. Visual/browser
 verification, fixed-candidate integration checks and independent reviews are

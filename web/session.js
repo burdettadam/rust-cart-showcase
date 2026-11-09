@@ -91,7 +91,7 @@ export class CartSession {
   }
 
   async add(product, quantity, customBody) {
-    if (this.state.busy) return false;
+    if (this.state.busy || this.state.error === "engine") return false;
     if (customBody !== undefined && this.state.mode !== "sample") {
       this.state.error = "custom-mode";
       this.state.message = "Select Sample prices before trying a custom response. Your cart is unchanged.";
@@ -108,6 +108,7 @@ export class CartSession {
       : "Passing the quote to Rust…";
     this.emit();
 
+    let phase = "quote";
     try {
       let body;
       if (customBody !== undefined) body = customBody;
@@ -117,11 +118,14 @@ export class CartSession {
       } else body = await this.loadPrice(product, { signal: controller.signal });
 
       if (generation !== this.generation) return false;
+      phase = "rust";
       return this.apply(product, quantity, body);
     } catch (error) {
       if (generation !== this.generation) return false;
-      this.state.error = "request";
-      this.state.message = `${error.message || "The operation could not be completed."} Your cart is unchanged.`;
+      this.state.error = phase === "quote" ? "request" : "engine";
+      this.state.message = phase === "quote"
+        ? `${error.message || "The price request could not be completed."} Your cart is unchanged.`
+        : "The Rust engine could not complete the operation. Reset the cart before continuing.";
       return false;
     } finally {
       if (generation === this.generation) {
