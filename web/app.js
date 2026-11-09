@@ -118,7 +118,7 @@ function render(state) {
     row.classList.toggle("has-long-amount", item.line_total.length > 12 || item.unit_price.length > 12);
     const info = node("div", "cart-line-info");
     const quote = node("span", "cart-line-quote");
-    quote.append(node("span", "", `${item.quantity} ×`), node("span", "", item.unit_price));
+    quote.append(node("span", "", `${item.quantity} ×`), document.createTextNode(" "), node("span", "", item.unit_price));
     info.append(node("strong", "", product.name), quote);
     row.append(productMark(product, "cart-line-mark"), info, node("span", "line-total", item.line_total));
     fragment.append(row);
