@@ -65,6 +65,25 @@ test("decodes a UTF-8 character spanning chunks and retains exact price digits",
   assert.equal(body, '{"name":"café","price":2.5200}');
 });
 
+for (const split of [false, true]) {
+  test(`preserves a leading UTF-8 BOM in ${split ? "split" : "complete"} chunks for Rust validation`, async () => {
+    const expected = '\uFEFF{"price":2.5200}';
+    const bytes = new TextEncoder().encode(expected);
+    const chunks = split
+      ? [bytes.slice(0, 1), bytes.slice(1, 2), bytes.slice(2, 3), bytes.slice(3)]
+      : [bytes];
+    const stream = new ReadableStream({
+      start(controller) {
+        for (const chunk of chunks) controller.enqueue(chunk);
+        controller.close();
+      },
+    });
+    const body = await fetchPriceBody("cornflakes", { fetchImpl: async () => new Response(stream) });
+    assert.equal(body.codePointAt(0), 0xfeff, "transport must retain the BOM instead of making invalid JSON valid");
+    assert.equal(body, expected);
+  });
+}
+
 test("rejects invalid UTF-8 instead of silently replacing bytes", async () => {
   await assert.rejects(fetchPriceBody("cornflakes", {
     fetchImpl: async () => new Response(new Uint8Array([0xff])),

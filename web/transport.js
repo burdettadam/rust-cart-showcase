@@ -63,7 +63,7 @@ export async function fetchPriceBody(product, {
     }
     if (!response.body) return "";
     reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8", { fatal: true });
+    const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
     let bytes = 0;
     let body = "";
     try {

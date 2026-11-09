@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { CartSession } from "../web/session.js";
+import { fetchPriceBody } from "../web/transport.js";
 
 const empty = () => ({ items: [], subtotal: "0.00", tax: "0.00", total: "0.00" });
 const deferred = () => {
@@ -45,6 +46,22 @@ test("a live fetch is serialized and passes raw text without JSON number convers
   quote.resolve(exact);
   assert.equal(await first, true);
   assert.deepEqual(cart.calls, [{ product: "cornflakes", quantity: "2", body: exact }]);
+});
+
+test("the real live transport hands a leading BOM to the cart unchanged", async () => {
+  const raw = '\uFEFF{"price":2.52}';
+  const cart = new RecordingCart();
+  cart.nextError = "Rejected by the Rust boundary";
+  const session = new CartSession(cart, {
+    loadPrice: (product, options) => fetchPriceBody(product, {
+      ...options, fetchImpl: async () => new Response(raw),
+    }),
+  });
+  session.setMode("live");
+  assert.equal(await session.add("cornflakes", "1"), false);
+  assert.deepEqual(cart.calls, [{ product: "cornflakes", quantity: "1", body: raw }]);
+  assert.equal(session.state.lastBody, raw);
+  assert.deepEqual(session.state.snapshot, empty());
 });
 
 test("reset cancels a pending request and a late quote cannot repopulate the cart", async () => {
