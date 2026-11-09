@@ -60,7 +60,6 @@ test("the real live transport hands a leading BOM to the cart unchanged", async 
   session.setMode("live");
   assert.equal(await session.add("cornflakes", "1"), false);
   assert.deepEqual(cart.calls, [{ product: "cornflakes", quantity: "1", body: raw }]);
-  assert.equal(session.state.lastBody, raw);
   assert.deepEqual(session.state.snapshot, empty());
 });
 

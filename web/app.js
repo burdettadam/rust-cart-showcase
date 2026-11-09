@@ -166,10 +166,15 @@ async function loadBuildLabel() {
     const response = await fetch("./build-info.json");
     if (!response.ok) return;
     const metadata = await response.json();
-    if (!/^[a-f0-9]{40}$/.test(metadata.core_commit) || !/^[a-f0-9]{40}$/.test(metadata.source_commit)) return;
+    if (typeof metadata.core_commit !== "string" || typeof metadata.source_commit !== "string"
+      || typeof metadata.source_dirty !== "boolean"
+      || !/^[a-f0-9]{40}$/.test(metadata.core_commit) || !/^[a-f0-9]{40}$/.test(metadata.source_commit)) return;
     const label = byId("build-label");
     label.textContent = `Core ${metadata.core_commit.slice(0, 7)} · Showcase ${metadata.source_commit.slice(0, 7)}${metadata.source_dirty ? " + local changes" : ""}`;
     label.title = `Core: ${metadata.core_commit}\nShowcase: ${metadata.source_commit}${metadata.source_dirty ? " (built with local changes)" : ""}`;
+    const repository = "https://github.com/burdettadam/rust-cart-showcase";
+    byId("source-link").href = `${repository}/tree/${metadata.source_commit}`;
+    byId("architecture-link").href = `${repository}/blob/${metadata.source_commit}/docs/architecture/README.md`;
   } catch {
     // Build metadata is optional; it never gates cart functionality.
   }
