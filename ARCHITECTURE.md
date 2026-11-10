@@ -43,12 +43,14 @@ assignment and private completion link are not exported or deployed.
 
 This is deliberate source vendoring from the private library fork into the
 independently buildable public companion.
-A full source commit and file hashes make the relationship auditable. It does
-create an explicit update step; `verify_vendor.py` rejects missing, added or
-changed files relative to that manifest. The manifest is a consistency check,
-not a signature or independent proof of trust. Reviewers compare it to the
-retained source commit. A pinned Git dependency is an alternative if the Pages
-build has appropriate private repository access.
+The manifest records the original source commit and file hashes. Public readers
+can inspect the exported source and run `verify_vendor.py`, which rejects missing,
+added or changed files relative to the manifest. This checks consistency; it is
+not a signature or independent proof of trust. Maintainers and reviewers with
+access to the private library's Git history can compare the export against the
+recorded source commit to verify export fidelity. Vendoring requires an explicit
+update step; a pinned Git dependency is an alternative if the Pages build has
+appropriate private repository access.
 
 ## Questions and answers
 
