@@ -64,3 +64,26 @@ Refresh the README quickstart and live-site link, consolidate current status in
 `HANDOFF.md`, and preserve historical process and honest AI attribution. Retain
 all quality gates and two independent reviews. Main-only Pages deployment is the
 existing release path; challenge submission remains separately unauthorized.
+
+## Approved documentation and navigation cleanup
+
+The user approved all findings from the documentation/navigation audit and
+authorized merges in this chat. Make README the human entry point; consolidate
+architecture and interview Q&A at root ARCHITECTURE.md; put complete operational
+commands in DEVELOPMENT.md; combine the concise development history and honest
+AI disclosure in docs/AI_USAGE.md. Remove superseded preparation drafts, duplicated
+handoffs and stale UI notes after retaining useful details in those maintained
+documents. Git and actual PRs retain the original history.
+
+The companion also moves the existing source/design links near the primary demo
+action, preserves commit pinning on desktop and mobile, shortens repeated FAQ
+content and corrects the skip-link wording. Preserve all functional cart controls,
+accepted business behavior, original assignment, agent configuration, licensing,
+91% production coverage gate and two independent reviews. Root owns integration,
+publication and merge; each implementation worktree has one assigned writer.
+
+Check changed references and navigation, use the existing quality/release gates,
+and bind independent reviews to the integrated candidate before the authorized
+merge. Observe the resulting Pages deployment and focused live behavior. The
+user's merge authorization does not claim completed personal code inspection.
+Final challenge submission remains separately unauthorized.
