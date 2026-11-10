@@ -104,8 +104,6 @@ The root agent owns integration and Git administration. Each implementation writ
 uses a dedicated branch/worktree; independent reviewers do not edit the candidate.
 Commit meaningful increments on the repository's actual ancestry. Preserve the
 original histories and AI attribution, and renew relevant checks after fixes.
-The [README review links](README.md#review-and-verification) lead directly to
-current PR/CI records; do not treat archived results as fresh verification.
 
 Scope Cargo targets to the checkout and serialize commands sharing one target.
 Temporary HTTP fixtures allocate loopback ports. Browser live mode uses CORS

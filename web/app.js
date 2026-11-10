@@ -3,6 +3,7 @@ import { CartSession, PRODUCTS } from "./session.js";
 const byId = (id) => document.getElementById(id);
 const elements = {
   products: byId("product-list"),
+  cart: byId("cart"),
   cartLines: byId("cart-lines"),
   empty: byId("empty-cart"),
   lineCount: byId("line-count"),
@@ -11,6 +12,7 @@ const elements = {
   total: byId("total"),
   mobileTotal: byId("mobile-total"),
   mobileBar: document.querySelector(".mobile-cart-bar"),
+  mobileLabel: byId("mobile-cart-label"),
   snapshot: byId("snapshot-json"),
   status: byId("operation-status"),
   message: byId("operation-message"),
@@ -99,6 +101,8 @@ function render(state) {
   elements.status.setAttribute("aria-live", error ? "assertive" : "polite");
   elements.message.textContent = message;
   elements.messageIcon.textContent = error ? "!" : busy ? "↻" : "↳";
+  elements.mobileBar.classList.toggle("is-error", Boolean(error));
+  elements.mobileLabel.textContent = error ? "View error" : "View cart";
   elements.demo.setAttribute("aria-busy", String(busy));
   elements.sourceDescription.textContent = mode === "live"
     ? "Fresh API prices on every add. Network access required."
@@ -152,6 +156,8 @@ function showLoadFailure(error, duringLoad = true) {
   elements.status.setAttribute("role", "alert");
   elements.status.setAttribute("aria-live", "assertive");
   elements.messageIcon.textContent = "!";
+  elements.mobileBar.classList.add("is-error");
+  elements.mobileLabel.textContent = "View error";
   elements.message.textContent = duringLoad
     ? "The WebAssembly module could not load. Reload the page to try again. A downloaded copy must be served over HTTP, rather than opened as a local file."
     : "The Rust engine could not recover. Reload the page to start a new cart.";
@@ -197,7 +203,8 @@ byId("reset-cart").addEventListener("click", () => {
 for (const button of document.querySelectorAll("[data-scenario]")) {
   button.addEventListener("click", () => {
     runCartAction(() => session.runScenario(button.dataset.scenario));
-    elements.demo.scrollIntoView({ block: "start" });
+    elements.cart.focus({ preventScroll: true });
+    elements.cart.scrollIntoView({ block: "start" });
   });
 }
 elements.customForm.addEventListener("submit", async (event) => {

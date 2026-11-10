@@ -48,12 +48,11 @@ release verification, deployment and library-update commands.
 | Rust/WASM boundary | [Bridge](src/lib.rs) and [bridge tests](tests/bridge.rs) |
 | Browser requests and state | [Transport](web/transport.js), [session](web/session.js) and [tests](tests) |
 | Design decisions and interview preparation | [Architecture and Q&A](ARCHITECTURE.md) |
+| Change history and reviews | [Pull requests](https://github.com/burdettadam/rust-cart-showcase/pulls?q=is%3Apr) |
 
 [CI and Pages runs](https://github.com/burdettadam/rust-cart-showcase/actions/workflows/pages.yml)
-record the checks and deployments.
-[The documentation/navigation PR](https://github.com/burdettadam/rust-cart-showcase/pull/3)
-records this cleanup's candidate, reviews and outcome. Production Rust line
-coverage must be at least **91%**; measured results belong to their actual CI runs.
+record the checks and deployments. Production Rust line coverage must be at least
+**91%**; measured results belong to their actual CI runs.
 
 The [provenance manifest](vendor/provenance.json) identifies the exact library
 export. Its canonical repository is private, but this companion builds without

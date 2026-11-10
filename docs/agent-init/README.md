@@ -11,24 +11,13 @@ Original initializer source commit:
 Executable Git blob: `f826be9fe3ce254fbe9ae983d3c27d41a2a7956e`.
 Template digest: `git-blob-sha1:423d14af1e8a523db02e9e4ee7e7428a0a4a5c69`.
 [Upstream source](https://github.com/ElevenID/git-agent/tree/2ead37bfe9bf28489816bfdd4deeea137e23fa37).
-The upstream license is retained in `docs/git-agent-LICENSE.txt`.
+The [upstream license](../git-agent-LICENSE.txt) is retained.
 
-`AGENTS.md` routes to this companion's maintained governance, development,
-architecture and accepted plan. The actual `work-goal`, `worktree-flow` and native
-reviewer role files are retained. Models and reasoning effort inherit host
-settings. Two independent reviews, a maximum of three rounds, honest AI attribution
-and human merge judgment remain unchanged.
+The original project's schema validation succeeded, but its native-client startup
+probe stopped on an existing global `features.experimental_use_rmcp_client`
+setting. Schema validity and copied files do not establish native Codex trust or
+loading in this companion. Current chat reviewers use the available collaboration
+runtime and the maintained review guides.
 
-The original project's schema check and native-client startup probe were historical
-observations in that environment. This companion has not established native Codex
-trust/loading merely by copying configuration. Current chat reviewers use the
-available collaboration runtime and the maintained review guides. Configuration,
-actual review execution, GitHub protections and hosted CI remain separate facts.
-
-GitHub Pages deployment is part of this companion's scope. The original library's
-non-deployed scope remains in its own repository. The user authorized the actual
-`burdettadam/rust-cart-showcase` repository on 2026-11-09. Current source publication
-and verification are linked from the [README](../../README.md#review-and-verification)
-and actual PR/CI records. A local commit,
-saved source archive or granted access is not a hosted PR or a successful Pages
-deployment.
+Operational rules live in [GOVERNANCE](../../GOVERNANCE.md) and
+[DEVELOPMENT](../../DEVELOPMENT.md).
