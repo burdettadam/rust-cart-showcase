@@ -174,7 +174,7 @@ async function loadBuildLabel() {
     label.title = `Core: ${metadata.core_commit}\nShowcase: ${metadata.source_commit}${metadata.source_dirty ? " (built with local changes)" : ""}`;
     const repository = "https://github.com/burdettadam/rust-cart-showcase";
     byId("source-link").href = `${repository}/tree/${metadata.source_commit}`;
-    byId("architecture-link").href = `${repository}/blob/${metadata.source_commit}/docs/architecture/README.md`;
+    byId("architecture-link").href = `${repository}/blob/${metadata.source_commit}/ARCHITECTURE.md`;
   } catch {
     // Build metadata is optional; it never gates cart functionality.
   }

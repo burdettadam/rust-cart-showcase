@@ -1,92 +1,124 @@
-# Development, verification and recovery
+# Development, verification and deployment
 
-## Environment
+Run these commands from a Git checkout. The [README](README.md#run-locally) has
+the clone-and-preview quickstart; this guide owns the complete maintenance commands.
 
-Use Rust 1.97.1 with rustfmt, Clippy, llvm-tools-preview and
-wasm32-unknown-unknown. `rust-toolchain.toml` pins these inputs. The wasm-bindgen
-crate and CLI must both be 0.2.130. The maintained verification environment uses
-Node 24 and Python 3.12. Git is required: build provenance reads the checkout's
-commit and dirty status. No npm packages or JavaScript bundler are needed.
+## Toolchain
+
+`rust-toolchain.toml` pins Rust 1.97.1, rustfmt, Clippy, llvm-tools-preview and
+`wasm32-unknown-unknown`. Use Node 24 and Python 3.12. The wasm-bindgen crate and
+CLI must both be 0.2.130. There are no npm packages or JavaScript bundler.
 
 ```sh
 cargo install wasm-bindgen-cli --locked --version 0.2.130
 cargo install cargo-llvm-cov --locked --version 0.6.21
 ```
 
-Concrete build, test, coverage and static-server commands are in `README.md` and
-mirrored by `.github/workflows/pages.yml`. The root workspace runs both original
-library and bridge tests. Build the WASM target with `-p rust-cart-showcase`, which
-keeps native HTTP disabled in the browser dependency graph. The native workspace
-still tests HTTP with the library's default feature enabled.
+## Verify a release candidate
 
-## Writers and resources
+Run the full checks from a clean, fixed commit. Record its commit/tree, working
+directory, tool versions, commands, exit status, logs and raw coverage. The
+[Pages workflow](.github/workflows/pages.yml) executes the hosted gates.
+
+```sh
+python3 scripts/verify_vendor.py
+cargo fmt --all -- --check
+cargo clippy --locked --workspace --all-targets -- -D warnings
+cargo test --locked --workspace --all-targets
+cargo test --locked --workspace --doc
+cargo test --locked -p equal-experts-shopping-cart --no-default-features --all-targets
+node --test tests/*.test.mjs
+python3 -B -m unittest discover -s tests -p 'test_*.py' -v
+cargo llvm-cov --locked --workspace --all-targets --ignore-filename-regex '/tests/' --fail-under-lines 91
+python3 scripts/build.py
+node scripts/verify-wasm.mjs
+python3 scripts/verify_dist.py --release
+```
+
+Coverage includes the bridge and all production library Rust, including native
+HTTP; tests and third-party dependencies are excluded. The minimum is **91%**.
+Report native line coverage separately from compiled-WASM execution, browser
+observations and deployment. Do not exclude production paths to improve results.
+
+The workspace tests both the library and bridge. The build script compiles
+`-p rust-cart-showcase` for WASM, keeping native HTTP out of the browser dependency
+graph. Deterministic tests use local fixtures and need no credentials or live API.
+Python verifier tests use only the standard library.
+
+Release verification requires the artifact's source commit to equal the actual
+checkout `HEAD`, with both the build metadata and current checkout clean. It also
+checks the static files and metadata types. A successful local build does not
+establish hosted deployment health.
+
+## Preview local changes
+
+```sh
+python3 scripts/build.py
+python3 scripts/verify_dist.py
+python3 -m http.server 8080 --directory dist
+```
+
+Open `http://localhost:8080`. The default artifact verifier permits previews built
+with changes; the page labels them `+ local changes`. Serve over HTTP, not
+`file://`. A normal source ZIP lacks the Git objects required for build identity.
+
+## Update the library export
+
+Change business rules in the canonical library first. After reviewing that
+candidate, export its exact commit:
+
+```sh
+python3 scripts/export_core.py /path/to/library FULL_40_CHARACTER_COMMIT_SHA
+cargo generate-lockfile
+python3 scripts/verify_vendor.py
+```
+
+Review the source diff and any lockfile changes, then run the full checks above.
+Do not edit the vendor copy by hand. The manifest checks consistency; comparison
+with the retained library Git objects establishes export fidelity. The exporter
+includes Cargo inputs, source and tests while excluding the assignment, private
+completion link, governance and review evidence.
+
+Cargo uses the root workspace's profiles; the exported library profiles remain
+byte-identical and Cargo reports that the workspace overrides them.
+
+## Publish to GitHub Pages
+
+1. For a new repository, select **GitHub Actions** in Settings → Pages.
+   This repository already uses that publishing source.
+2. Prepare a feature PR into `main`, run the gates and obtain the two independent
+   reviews and user merge decision required by [GOVERNANCE](GOVERNANCE.md).
+3. After an authorized merge, observe the
+   [actual workflow result](https://github.com/burdettadam/rust-cart-showcase/actions/workflows/pages.yml)
+   and its deployment URL.
+
+PRs run checks without deployment. On `main`, the workflow uploads only `dist`
+after a successful build, then deploys it through the `github-pages` environment.
+Only the deploy job receives Pages-write/OIDC permissions; the build job uses
+repository/Pages read access. Relative assets support the repository subpath.
+Deployment does not perform the assignment's completion action.
+
+## Work ownership and recovery
 
 The root agent owns integration and Git administration. Each implementation writer
-uses a dedicated branch/worktree. Cargo target directories are scoped to the
-working checkout; serialize quality commands sharing one target directory.
-Temporary HTTP fixtures allocate loopback ports. No credentials, database or live
-price API is required for deterministic tests.
+uses a dedicated branch/worktree; independent reviewers do not edit the candidate.
+Commit meaningful increments on the repository's actual ancestry. Preserve the
+original histories and AI attribution, and renew relevant checks after fixes.
+The [README review links](README.md#review-and-verification) lead directly to
+current PR/CI records; do not treat archived results as fresh verification.
 
-The browser live mode requests the public price API using CORS. It does not send
-credentials or silently fall back to sample data. Reset and mode changes abort
-requests and invalidate their generation. The user-facing state stays in memory.
+Scope Cargo targets to the checkout and serialize commands sharing one target.
+Temporary HTTP fixtures allocate loopback ports. Browser live mode uses CORS
+without credentials or a silent sample-data fallback; its state stays in memory.
 
-## Checks and source identity
+For recovery, clone the repository or restore its saved Git bundle/history.
+Inspect branch, clean status and source/vendor identity, install the pinned tools,
+and run the checks above. Preserve the completed checkpoint and PR/CI evidence
+before removing a worktree or ignored `target`, `dist`, cache or `.evidence` files.
+A local archive is not proof of remote publication or an unattended backup.
 
-Freeze an exact commit before acceptance verification. Record commit/tree,
-working directory, tool versions, command, exit status, logs and raw coverage.
-Production Rust line coverage must be >=91%; include bridge and vendored production
-code. Report native coverage separately from compiled-WASM execution, browser QA
-and deployment. Never exclude production paths to improve the result.
-
-Run `scripts/verify_vendor.py` before builds. Vendor updates use the exporter with
-an explicit full core commit and create a reviewable diff. Keep Cargo.lock real
-and locked; inspect dependency changes. The manifest hashes establish consistency,
-while comparison to retained Git objects establishes export fidelity.
-
-After building, `python3 scripts/verify_dist.py --release` checks the static
-artifact and requires its source commit to equal the checkout's actual `HEAD`,
-with both build metadata and current checkout clean. The default command omits
-that release-only gate so local previews remain usable and visibly labeled when
-built with changes. Both modes validate the provenance metadata types. Run the
-stdlib artifact tests with
-`python3 -B -m unittest discover -s tests -p 'test_*.py' -v`.
-
-## Git, review and publishing
-
-Commit meaningful increments on feature branches. Topic work may be assembled on
-the integration feature branch. Freeze the combined candidate and obtain contract
-and adversarial reviews under `GOVERNANCE.md`; fixes renew relevant evidence.
-Only actual human review supplies the merge decision for `main`.
-
-GitHub Pages build checks run on PRs. Deployment is restricted to `main`, depends
-on the successful build, uploads only `dist`, uses the `github-pages` environment,
-and grants Pages-write/OIDC permissions only to the deployment job. The build
-job has repository/Pages read permissions for checkout and Pages metadata. Source
-repository Settings → Pages must select GitHub Actions before deployment.
-
-The authorized repository is
-[`burdettadam/rust-cart-showcase`](https://github.com/burdettadam/rust-cart-showcase).
-Feature branches target `main` on its actual GitHub ancestry.
-[HANDOFF](HANDOFF.md) links current publication, verification and release records.
-Keep the original saved histories; GitHub API imports identify their AI origin
-and original source author/SHA. Do not overwrite existing history or confuse
-retained archive checks with fresh PR verification.
-Generated `target`, `dist`, caches and `.evidence` are not tracked in Git.
-
-## Recovery
-
-Clone the public repository using the README quickstart, or restore a saved Git
-bundle/history archive. A normal GitHub source ZIP does not contain the Git objects
-required for build provenance. Inspect branch, clean status, source/vendor hashes
-and [HANDOFF](HANDOFF.md); install pinned tools and run the maintained checks.
-Local previews and task-specific toolchain paths are reconstructable. Save the
-completed checkpoint before deleting a worktree or generated evidence. A retained
-archive does not establish remote publication or an unattended backup promise.
-
-Managed browser-preview synchronization can create temporary files in directories
-under its shared workspace. During local QA, place Cargo output outside that
-synchronized tree using a task-scoped `CARGO_TARGET_DIR` if coverage export races
-with those files. The retained evidence records the actual environment. The
-GitHub Actions job does not run that preview synchronizer. Do not omit production
-files or alter the coverage denominator to work around an export failure.
+Managed browser-preview synchronization can create transient files in its shared
+workspace. If they race with coverage export, use a task-scoped
+`CARGO_TARGET_DIR` outside that tree and record the environment. GitHub Actions
+does not use that synchronizer. Keep failed attempts and renew the affected
+checks; never change the production coverage denominator to bypass a failure.

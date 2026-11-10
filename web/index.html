@@ -10,7 +10,7 @@
     <script type="module" src="./app.js"></script>
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to the demo</a>
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header wrap">
       <a class="wordmark" href="#" aria-label="Rust Cart Lab home">
         <span class="brand-mark" aria-hidden="true">r<span>↗</span></span>
@@ -18,7 +18,7 @@
       </a>
       <nav aria-label="Main navigation">
         <a href="#playground">Playground</a>
-        <a href="#under-the-hood">Under the hood <span aria-hidden="true">↗</span></a>
+        <a href="#under-the-hood">How it works <span aria-hidden="true">↗</span></a>
       </nav>
       <span class="engine-badge is-loading" id="engine-status" role="status"><span class="engine-dot" aria-hidden="true"></span><span id="engine-label">Loading Rust…</span></span>
     </header>
@@ -31,7 +31,10 @@
           <p class="hero-description">Add a few essentials. Explore the edge cases. See the actual Rust library calculate every total, right here in your browser.</p>
           <div class="hero-actions">
             <button type="button" class="button button-primary" data-scenario="example" data-engine disabled>Run the example <span aria-hidden="true">↗</span></button>
-            <a class="text-link" href="#under-the-hood">See how it works <span aria-hidden="true">↓</span></a>
+            <nav class="review-links" aria-label="Project resources">
+              <a class="text-link" id="source-link" href="https://github.com/burdettadam/rust-cart-showcase">View source</a>
+              <a class="text-link" id="architecture-link" href="https://github.com/burdettadam/rust-cart-showcase/blob/main/ARCHITECTURE.md">Architecture</a>
+            </nav>
           </div>
           <p class="hero-footnote"><span aria-hidden="true">✓</span> Exact cents <span class="middot" aria-hidden="true">·</span> 12.5% tax <span class="middot" aria-hidden="true">·</span> No account needed</p>
         </div>
@@ -127,13 +130,11 @@
 
       <section class="architecture-section" id="under-the-hood" aria-labelledby="architecture-title">
         <div class="wrap architecture-layout">
-          <div class="architecture-intro"><p class="eyebrow">03 / UNDER THE HOOD</p><h2 id="architecture-title">One set of rules.<br>Two places to run.</h2><p>The shopping-cart library runs natively in Rust and in your browser through WebAssembly. This companion gives its behavior a visible, interactive surface.</p><div class="stack-labels"><span>Rust</span><span>WebAssembly</span><span>Static HTML + JS</span></div></div>
+          <div class="architecture-intro"><p class="eyebrow">03 / UNDER THE HOOD</p><h2 id="architecture-title">How it works.</h2><p>The same shopping-cart library runs natively and through WebAssembly in your browser.</p><div class="stack-labels"><span>Rust</span><span>WebAssembly</span><span>Static HTML + JS</span></div></div>
           <div class="architecture-notes">
-            <details open><summary><span class="detail-number">01</span> What does Rust own?<span class="detail-toggle" aria-hidden="true">+</span></summary><p>Cart state, quantity validation, exact price parsing, checked arithmetic and totals. JavaScript sends the raw price response to the WASM module and displays the decimal strings it returns. No money calculations happen in JavaScript.</p></details>
-            <details><summary><span class="detail-number">02</span> Why not use floating-point money?<span class="detail-toggle" aria-hidden="true">+</span></summary><p>The library works in checked integer cents. Tax is 12.5% of the full subtotal, rounded upward once. A price with significant fractions of a cent is rejected rather than silently rounded. Prices must use ordinary decimal JSON number notation; exponent notation is unsupported.</p></details>
-            <details><summary><span class="detail-number">03</span> What happens when something fails?<span class="detail-toggle" aria-hidden="true">+</span></summary><p>A rejected price, invalid quantity, failed request or arithmetic overflow leaves the last accepted cart state intact. Requests have a five-second budget and a 16 KiB response limit. Resetting the cart or switching price sources cancels a pending request and prevents late results from changing the new cart.</p></details>
-            <details><summary><span class="detail-number">04</span> What are the boundaries of this demo?<span class="detail-toggle" aria-hidden="true">+</span></summary><p>This is an in-memory cart: no checkout, stock reservation or saved basket. Refreshing starts over. Adding an existing product combines quantity and reprices all its units. The library-only challenge remains separate from this showcase.</p></details>
-            <details><summary><span class="detail-number">05</span> How was AI involved?<span class="detail-toggle" aria-hidden="true">+</span></summary><p>The developer directs the design and makes acceptance decisions. ChatGPT produced the implementation and test drafts and provides technical analysis. Automated tests and independent AI reviews supply evidence; they do not replace the developer's own review or judgment.</p></details>
+            <p>Rust validates prices and quantities, owns the cart, and calculates totals in exact cents. JavaScript handles the interface and price requests.</p>
+            <p>A rejected price, invalid quantity or failed request leaves the cart unchanged. Resetting or switching price sources cancels pending requests. The cart stays in memory; refreshing starts over.</p>
+            <p class="ai-disclosure">ChatGPT produced the implementation and test drafts. The developer directs the design and retains review and acceptance decisions. Automated tests and independent AI reviews provide evidence for those decisions.</p>
           </div>
         </div>
       </section>
@@ -142,11 +143,9 @@
     <footer class="site-footer wrap">
       <div class="footer-brand">Rust Cart <strong>Lab</strong><p>A small project, made inspectable.</p></div>
       <p id="build-label">Rust library · WebAssembly companion</p>
-      <nav class="footer-links" aria-label="Project resources">
-        <a id="source-link" href="https://github.com/burdettadam/rust-cart-showcase">View source</a>
-        <a id="architecture-link" href="https://github.com/burdettadam/rust-cart-showcase/blob/main/docs/architecture/README.md">Architecture</a>
+      <div class="footer-links">
         <a href="#main">Back to top <span aria-hidden="true">↑</span></a>
-      </nav>
+      </div>
     </footer>
     <div class="mobile-cart-bar"><span>Your total <strong id="mobile-total">0.00</strong></span><a href="#cart">View cart <span aria-hidden="true">↑</span></a></div>
   </body>
