@@ -12,6 +12,9 @@ independent review. Estimated AI contribution is **100% of the first drafts of
 new implementation, tests and project documentation**. The vendored library
 originates in the same AI-assisted project. User direction is not manual authorship.
 
+The README illustration was generated with OpenAI image generation from the
+documented project behavior and visual style. It is artwork, not a browser capture.
+
 Native commits identify ChatGPT as the contributor. GitHub API imports may carry
 the authorized account's identity; their `AI-Generated-By`, `Original-Author` and
 `Original-Commit` trailers preserve the actual origin. Original histories remain
