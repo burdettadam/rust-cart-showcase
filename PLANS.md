@@ -1,89 +1,56 @@
 # Accepted goal: Rust cart WebAssembly showcase
 
-The user requested a functional WebAssembly showcase on GitHub Pages on
-2026-11-08. Build a separate companion so the original assignment stays a
-library submission. The user retains design judgment, merge and submission
-decisions. ChatGPT supplies implementation and technical evidence.
+The user requested a functional WebAssembly showcase on GitHub Pages. The
+assignment remains a separate library project; the companion makes its behavior
+available for review. The user owns scope, design judgment, acceptance and merges.
+ChatGPT supplies implementation and technical evidence.
 
-## Scope and accepted behavior
+## Accepted behavior
 
-- Execute the existing Rust cart rules in WebAssembly; no JavaScript money math.
-- Export a fixed, verified library source revision into `vendor/shopping-cart`.
-  Record file hashes and source commit; one maintained library owns the rules.
-- Provide deterministic example prices and optional live price API requests.
-- Preserve exact price text until Rust parses it. Display Rust-formatted totals.
-- Show addition, quantity combination, latest-price behavior, upward tax rounding,
-  and errors that leave state unchanged. Reset discards only the local demo cart.
-- Serialize operations; no late fetch may repopulate a reset or switched session.
-- Build relative static assets for a GitHub Pages project path.
-- Ship only `dist` to Pages. No assignment instructions, completion URL, private
-  evidence, or development files belong in that artifact.
+- Run the existing Rust cart rules in WebAssembly; JavaScript does no money math.
+- Export a fixed, verified library revision into `vendor/shopping-cart`, recording
+  its commit and file hashes. The original library owns business-rule changes.
+- Offer repeatable sample prices and optional live API requests.
+- Preserve raw price text until Rust parses it; display Rust-formatted totals.
+- Show addition, quantity combination, latest-price behavior, upward tax rounding
+  and errors that preserve state. Reset discards only the local demo cart.
+- Serialize operations; a late request must not repopulate a reset or switched cart.
+- Use relative static assets that work under a GitHub Pages repository path.
+- Deploy only `dist`; exclude assignment instructions, the private completion
+  link, review evidence and development files from the artifact.
 
-## Delivery slices
+## Completed work
 
-1. Restore reviewed library and establish the companion's Git/agent baseline.
-2. Add feature-gated native HTTP and shared exact response parsing to the library
-   on its separate `feat/wasm-portability` branch.
-3. Add the Rust/WASM bridge, native tests and actual compiled-WASM smoke tests.
-4. Add an accessible responsive UI and meaningful transport/race tests.
-5. Add reproducible build, GitHub Pages workflow and architecture Q&A.
-6. Freeze source; execute quality and >=91% production Rust line coverage;
-   collect two independent reviews, at most three rounds; retain evidence.
+| Work | Authoritative record |
+| --- | --- |
+| Initial Rust/WASM bridge, browser interface, verified source export and Pages release | [PR #1](https://github.com/burdettadam/rust-cart-showcase/pull/1) |
+| Exact-price/HTTP corrections, source links, clean release verification and initial documentation cleanup | [PR #2](https://github.com/burdettadam/rust-cart-showcase/pull/2) |
 
-## Ownership and constraints
-
-The root agent owns Git administration, integration, bridge and deployment work.
-Assigned UI work uses a distinct worktree. Independent reviewers do not edit the
-candidate. Topic commits may be assembled on an integration feature branch;
-`main` merge remains the user's decision.
-
-The user created the public
-[`burdettadam/rust-cart-showcase`](https://github.com/burdettadam/rust-cart-showcase)
-repository on 2026-11-09 and authorized the GitHub connection for it and the
-private library fork. Its initial `main` commit is
-`0ec8238570b597cee798229eaae3aab446cdb057`. `feat/wasm-showcase` imports the reviewed
-companion onto that real base; the original local histories remain in the saved
-archives. GitHub API import messages identify AI origin and original source
-author/SHA rather than claiming human authorship from the account identity.
-
-Renew checks and two independent reviews against the actual integrated candidate,
-then present the real PR for the user's merge decision. Preserve main-only Pages
-deployment and observe its actual result after an approved merge. Never force-push
-unrelated local history, invent a PR or claim an unobserved deployment.
-
-## Accepted audit improvements: 2026-11-09
-
-The user requested implementation of all proposed improvements after the merged
-baseline audit. Add source and architecture links tied to the displayed build,
-remove unused response-body session state, and enforce source identity and a clean
-checkout during release-artifact verification. Keep explicitly labeled local
-previews usable. Re-export the reviewed library fixes rather than changing the
-vendored business rules independently.
-
-Refresh the README quickstart and live-site link, consolidate current status in
-`HANDOFF.md`, and preserve historical process and honest AI attribution. Retain
-all quality gates and two independent reviews. Main-only Pages deployment is the
-existing release path; challenge submission remains separately unauthorized.
+Those PRs retain their actual candidates, findings, checks and release outcomes.
+[AI usage and history](docs/AI_USAGE.md) records attribution and consequential
+corrections without repeating volatile test counts.
 
 ## Approved documentation and navigation cleanup
 
-The user approved all findings from the documentation/navigation audit and
-authorized merges in this chat. Make README the human entry point; consolidate
-architecture and interview Q&A at root ARCHITECTURE.md; put complete operational
-commands in DEVELOPMENT.md; combine the concise development history and honest
-AI disclosure in docs/AI_USAGE.md. Remove superseded preparation drafts, duplicated
-handoffs and stale UI notes after retaining useful details in those maintained
-documents. Git and actual PRs retain the original history.
+[PR #3](https://github.com/burdettadam/rust-cart-showcase/pull/3) tracks the current
+accepted cleanup. Make README the human entry point, keep the full architecture
+and interview Q&A in root `ARCHITECTURE.md`, put complete maintenance commands in
+`DEVELOPMENT.md`, and combine concise history with the honest AI disclosure.
+Remove superseded preparation drafts, duplicate handoffs and stale worker notes
+after preserving useful details. Git and actual PRs retain the original history.
 
-The companion also moves the existing source/design links near the primary demo
-action, preserves commit pinning on desktop and mobile, shortens repeated FAQ
-content and corrects the skip-link wording. Preserve all functional cart controls,
-accepted business behavior, original assignment, agent configuration, licensing,
-91% production coverage gate and two independent reviews. Root owns integration,
-publication and merge; each implementation worktree has one assigned writer.
+Move the existing source/design links near the primary demo action, preserve their
+commit pinning on desktop and mobile, shorten repeated FAQ content and correct
+the skip-link wording. Preserve all cart controls and accepted behavior.
+
+The user authorized implementation and merges for this cleanup. Root owns Git
+administration, integration and publication; each implementation worktree has one
+writer, and independent reviewers do not edit the candidate. Preserve the actual
+agent skills/roles, licensing, **91% production Rust line-coverage gate** and **two
+independent reviews**, with at most three rounds, under [GOVERNANCE](GOVERNANCE.md).
 
 Check changed references and navigation, use the existing quality/release gates,
-and bind independent reviews to the integrated candidate before the authorized
-merge. Observe the resulting Pages deployment and focused live behavior. The
-user's merge authorization does not claim completed personal code inspection.
-Final challenge submission remains separately unauthorized.
+and bind reviews to the integrated candidate before merging. Observe the actual
+Pages deployment and focused live behavior. The PR records verification, review,
+merge and deployment outcomes. Merge authorization does not establish completed
+personal code inspection. Final challenge submission remains separately unauthorized.

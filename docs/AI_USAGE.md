@@ -1,39 +1,45 @@
-# AI usage and human oversight
+# AI usage and development history
 
-The user requested and directs this work. ChatGPT acts as the implementation and
-technical-advice contributor. The user selected Rust, required evidence and
-frequent Git checkpoints, retained design/merge judgment, and requested a
-WebAssembly showcase on GitHub Pages.
+## Contributions and oversight
 
-AI was used for source recovery, design analysis, official-documentation research,
-Rust portability and browser adapter code, HTML/CSS/JavaScript, tests, build and
-workflow configuration, documentation, debugging and independent review.
-Estimated AI contribution is **100% of the first drafts of new implementation,
-tests and project documentation**. Vendored library code originates in the same
-AI-assisted project and retains its own disclosure. This estimate does not turn
-user direction into a claim of manual authorship.
+The user directs the work, selected Rust, requested the WebAssembly showcase,
+accepted the business assumptions, and retains design and acceptance judgment.
+ChatGPT contributes implementation and technical advice.
 
-The 2026-11-09 GitHub integration imports the saved source onto the new companion
-repository's actual base. GitHub API commits may carry the authorized account's
-identity; import messages identify the AI-generated work, original source author
-and source SHA. Original histories remain in the saved archives. Public replay
-omits transient historical Python bytecode that was already removed from the
-reviewed final source. Neither import mechanics nor human review changes the
-origin of generated implementation.
+AI was used for source recovery, design analysis, documentation research, Rust and
+browser code, tests, build/workflow configuration, debugging, documentation and
+independent review. Estimated AI contribution is **100% of the first drafts of
+new implementation, tests and project documentation**. The vendored library
+originates in the same AI-assisted project. User direction is not manual authorship.
 
-Review uses executable native tests, measured Rust coverage, actual compiled-WASM
-checks, browser transport/session tests, artifact checks and two independent AI
-reviews with distinct assignments. [HANDOFF](../HANDOFF.md) is the maintained
-entry point for actual candidate, browser, hosted verification and release
-records. [PROCESS](PROCESS.md) preserves the chronology and corrections.
+Native commits identify ChatGPT as the contributor. GitHub API imports may carry
+the authorized account's identity; their `AI-Generated-By`, `Original-Author` and
+`Original-Commit` trailers preserve the actual origin. Original histories remain
+retained. The public replay omitted temporary Python bytecode that an early
+native commit tracked and a later commit removed; reviewed final source already
+excluded it.
 
-On 2026-11-09 the user explicitly authorized merging the baseline before personal
-code inspection, requested an audit, and subsequently approved its improvements.
-The follow-up work includes navigation, release-metadata validation, removal of
-unused session state, and documentation consolidation. These decisions do not
-establish that manual code inspection or understanding is complete. User review,
-acceptance, merge approval and final challenge submission remain distinct from
-AI checks and reviews.
+Executed tests and two independent AI reviews provide evidence. They do not
+establish completed personal code inspection or understanding. The user authorized
+merges before personal inspection and later approved the documentation/navigation
+cleanup and its merges. Merge authorization, user acceptance, AI review, hosted
+verification, deployment and challenge submission remain distinct observations.
 
-The companion is separate from the challenge's library-only submission. No
-assignment completion action is performed by the build or deployment workflow.
+## Development history
+
+| Work | Decisions, corrections and record |
+| --- | --- |
+| [Original showcase — PR #1](https://github.com/burdettadam/rust-cart-showcase/pull/1) | Restore the library and build a separate public companion because the challenge requires a library. Initial repository access was unavailable; browser creation and repository authorization later resolved it. |
+| Initial verification | Independent review found an exact 16 KiB native reader boundary defect and browser UTF-8 BOM stripping; regressions reproduced them before the fixes. Browser QA corrected wrapping of large monetary values. A local coverage export failed on preview-sync temporary files, then passed with scoped output outside that tree. Failed attempts remain in the PR/evidence record. |
+| [First audit — PR #2](https://github.com/burdettadam/rust-cart-showcase/pull/2) | Correct canonical exact-price parsing for long insignificant-zero suffixes, simplify HTTP parsing, remove unused browser state, add source links and enforce clean release metadata. The preliminary public candidate failed the new WASM regression until the user explicitly approved its corrected core export. The PR records subsequent checks, merge and deployment separately. |
+| [Documentation and navigation cleanup — PR #3](https://github.com/burdettadam/rust-cart-showcase/pull/3) | The user approved one README entry point, one architecture/Q&A document, one development guide, this concise history/disclosure, and simpler demo navigation. The PR records the actual candidate, checks, reviews and merge outcome. |
+
+The [earlier process record in Git](https://github.com/burdettadam/rust-cart-showcase/blob/666dfdf8f5b443f8227a1fc6675e826d064af603/docs/PROCESS.md)
+preserves the longer chronology. Git and actual PRs retain superseded drafts and
+handoff snapshots without keeping them in the current reading path.
+[CI and Pages runs](https://github.com/burdettadam/rust-cart-showcase/actions/workflows/pages.yml)
+identify hosted outcomes; source checkpoints and local checks alone do not
+establish a deployed release.
+
+The companion's build and deployment do not perform the challenge completion
+action. Final submission still requires a separate explicit user instruction.
