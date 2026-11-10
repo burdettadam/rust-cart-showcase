@@ -26,6 +26,7 @@ ChatGPT supplies implementation and technical evidence.
 | Initial Rust/WASM bridge, browser interface, verified source export and Pages release | [PR #1](https://github.com/burdettadam/rust-cart-showcase/pull/1) |
 | Exact-price/HTTP corrections, source links, clean release verification and initial documentation cleanup | [PR #2](https://github.com/burdettadam/rust-cart-showcase/pull/2) |
 | Documentation and navigation consolidation | [PR #3](https://github.com/burdettadam/rust-cart-showcase/pull/3) |
+| Scenario result navigation and remaining documentation refinements | [PR #4](https://github.com/burdettadam/rust-cart-showcase/pull/4) |
 
 Those PRs retain their actual candidates, findings, checks and release outcomes.
 [AI usage and history](docs/AI_USAGE.md) records attribution and consequential
