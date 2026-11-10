@@ -69,12 +69,6 @@
         </div>
         <p class="mode-note">Switching the price source starts a fresh cart.</p>
 
-        <div class="message" id="operation-status" role="status" aria-live="polite" aria-atomic="true">
-          <span class="message-icon" id="message-icon" aria-hidden="true">↳</span>
-          <p id="operation-message">Starting the Rust engine. The controls will be ready in a moment.</p>
-          <button class="text-button" id="reload-button" type="button" hidden>Reload page</button>
-        </div>
-
         <div class="workbench">
           <section class="catalog" aria-labelledby="catalog-title">
             <div class="panel-heading"><h3 id="catalog-title">The breakfast shelf</h3><span class="subtle-badge">5 products</span></div>
@@ -83,8 +77,13 @@
             <p class="catalog-footnote">Each addition gets a price. The newest quote applies to every unit of that product already in the cart.</p>
           </section>
 
-          <aside class="cart-panel" id="cart" aria-labelledby="cart-title">
+          <aside class="cart-panel" id="cart" aria-labelledby="cart-title" tabindex="-1">
             <div class="panel-heading"><div class="cart-heading"><h3 id="cart-title">Your cart</h3><span id="line-count" class="subtle-badge">0 lines</span></div><button type="button" class="text-button reset-button" id="reset-cart" data-engine disabled>Reset <span aria-hidden="true">↺</span></button></div>
+            <div class="message" id="operation-status" role="status" aria-live="polite" aria-atomic="true">
+              <span class="message-icon" id="message-icon" aria-hidden="true">↳</span>
+              <p id="operation-message">Starting the Rust engine. The controls will be ready in a moment.</p>
+              <button class="text-button" id="reload-button" type="button" hidden>Reload page</button>
+            </div>
             <div class="cart-content" id="cart-content">
               <div class="empty-cart" id="empty-cart">
                 <div class="empty-cart-icon" aria-hidden="true"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M8 13h5l5 21h20l4-15H16M21 39h.01M35 39h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 10v12m-6-6h12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
@@ -147,6 +146,6 @@
         <a href="#main">Back to top <span aria-hidden="true">↑</span></a>
       </div>
     </footer>
-    <div class="mobile-cart-bar"><span>Your total <strong id="mobile-total">0.00</strong></span><a href="#cart">View cart <span aria-hidden="true">↑</span></a></div>
+    <div class="mobile-cart-bar"><span>Your total <strong id="mobile-total">0.00</strong></span><a href="#cart"><span id="mobile-cart-label">View cart</span> <span aria-hidden="true">↑</span></a></div>
   </body>
 </html>
