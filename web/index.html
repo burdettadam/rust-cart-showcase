@@ -133,7 +133,7 @@
           <div class="architecture-intro"><p class="eyebrow">03 / UNDER THE HOOD</p><h2 id="architecture-title">How it works.</h2><p>The same shopping-cart library runs natively and through WebAssembly in your browser.</p><div class="stack-labels"><span>Rust</span><span>WebAssembly</span><span>Static HTML + JS</span></div></div>
           <div class="architecture-notes">
             <p>Rust validates prices and quantities, owns the cart, and calculates totals in exact cents. JavaScript handles the interface and price requests.</p>
-            <p>A failed addition leaves the cart unchanged. Resetting or switching price sources cancels pending requests. The cart stays in memory; refreshing starts over.</p>
+            <p>A rejected price, invalid quantity or failed request leaves the cart unchanged. Resetting or switching price sources cancels pending requests. The cart stays in memory; refreshing starts over.</p>
             <p class="ai-disclosure">ChatGPT produced the implementation and test drafts. The developer directs the design and retains review and acceptance decisions. Automated tests and independent AI reviews provide evidence for those decisions.</p>
           </div>
         </div>
