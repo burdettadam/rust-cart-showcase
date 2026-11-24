@@ -55,7 +55,7 @@ pub enum CartError<E: std::error::Error + 'static> {
 pub struct ShoppingCart<P: PriceProvider> {
     prices: P,
     receipt: CartReceipt,
-    units_in_group: Option<u8>,
+    every_third_free: bool,
 }
 
 impl<P: PriceProvider> ShoppingCart<P> {
@@ -73,14 +73,14 @@ impl<P: PriceProvider> ShoppingCart<P> {
                 discount: money(0),
                 free_quantities: BTreeMap::new(),
             },
-            units_in_group: None,
+            every_third_free: false,
         }
     }
 
     /// Every third successfully added unit is free, across products and calls.
     pub fn with_every_third_free(prices: P) -> Self {
         Self {
-            units_in_group: Some(0),
+            every_third_free: true,
             ..Self::new(prices)
         }
     }
@@ -110,14 +110,10 @@ impl<P: PriceProvider> ShoppingCart<P> {
         let cents = price_in_cents(price).ok_or(CartError::InvalidPrice(price))?;
 
         let mut free_quantities = self.receipt.free_quantities.clone();
-        let next_group = self.units_in_group.map(|previous| {
-            let units = u64::from(previous) + u64::from(quantity);
-            let free = (units / 3) as u32;
-            if free > 0 {
-                *free_quantities.entry(product.to_owned()).or_default() += free;
-            }
-            (units % 3) as u8
-        });
+        let free_units = self.free_units_for_addition(quantity);
+        if free_units > 0 {
+            *free_quantities.entry(product.to_owned()).or_default() += free_units;
+        }
         let mut items = self.receipt.snapshot.items.clone();
         items.insert(
             product.to_owned(),
@@ -126,10 +122,26 @@ impl<P: PriceProvider> ShoppingCart<P> {
                 unit_price: money(cents),
             },
         );
-        let receipt = calculate_receipt(items, free_quantities).ok_or(CartError::AmountOverflow)?;
-        self.receipt = receipt;
-        self.units_in_group = next_group;
+        self.receipt =
+            calculate_receipt(items, free_quantities).ok_or(CartError::AmountOverflow)?;
         Ok(())
+    }
+
+    fn free_units_for_addition(&self, quantity: u32) -> u32 {
+        if !self.every_third_free {
+            return 0;
+        }
+
+        let units_in_cart: u128 = self
+            .receipt
+            .snapshot
+            .items
+            .values()
+            .map(|item| u128::from(item.quantity))
+            .sum();
+        let groups_before = units_in_cart / 3;
+        let groups_after = (units_in_cart + u128::from(quantity)) / 3;
+        (groups_after - groups_before) as u32
     }
 
     /// Returns the last validated state without retrieving prices again.
