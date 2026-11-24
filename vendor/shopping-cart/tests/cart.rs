@@ -335,3 +335,161 @@ fn exact_maximum_total_is_supported_but_one_more_cent_is_atomic_failure() {
     assert!(matches!(error, CartError::AmountOverflow));
     assert_eq!(cart.snapshot(), before);
 }
+
+#[test]
+fn third_unit_is_free_in_addition_order_across_products() {
+    for (steps, free_product, discount, subtotal, tax, total) in [
+        (
+            [("cornflakes", "2.52", 2), ("weetabix", "9.98", 1)],
+            "weetabix",
+            "9.98",
+            "5.04",
+            "0.63",
+            "5.67",
+        ),
+        (
+            [("weetabix", "9.98", 1), ("cornflakes", "2.52", 2)],
+            "cornflakes",
+            "2.52",
+            "12.50",
+            "1.57",
+            "14.07",
+        ),
+    ] {
+        let prices = FakePrices::returning(&[steps[0].1, steps[1].1]);
+        let mut cart = ShoppingCart::with_every_third_free(&prices);
+        for (product, _, quantity) in steps {
+            cart.add(product, quantity).unwrap();
+        }
+        let receipt = cart.receipt();
+        assert_eq!(receipt.free_quantities.len(), 1);
+        assert_eq!(receipt.free_quantities[free_product], 1);
+        assert_eq!(receipt.merchandise_subtotal, decimal("15.02"));
+        assert_eq!(receipt.discount, decimal(discount));
+        assert_totals(&receipt.snapshot, subtotal, tax, total);
+    }
+}
+
+#[test]
+fn bulk_add_matches_single_units_across_multiple_groups() {
+    let prices = FakePrices::returning(&["1", "2"]);
+    let mut bulk = ShoppingCart::with_every_third_free(&prices);
+    bulk.add("a", 2).unwrap();
+    bulk.add("b", 5).unwrap();
+
+    let prices = FakePrices::returning(&["1", "1", "2", "2", "2", "2", "2"]);
+    let mut singles = ShoppingCart::with_every_third_free(&prices);
+    for product in ["a", "a", "b", "b", "b", "b", "b"] {
+        singles.add(product, 1).unwrap();
+    }
+    assert_eq!(bulk.receipt(), singles.receipt());
+    assert_eq!(bulk.receipt().free_quantities["b"], 2);
+    assert_totals(&bulk.snapshot(), "8.00", "1.00", "9.00");
+}
+
+#[test]
+fn failed_adds_preserve_receipt_and_next_free_position() {
+    let prices = FakePrices::returning(&["0.04"]);
+    prices.replies.borrow_mut().extend([
+        Err(io::Error::other("unavailable")),
+        Ok(decimal("184467440737095516.15")),
+        Ok(decimal("1.00")),
+    ]);
+    let mut cart = ShoppingCart::with_every_third_free(&prices);
+    cart.add("a", 2).unwrap();
+    let before = cart.receipt();
+    assert!(matches!(cart.add("b", 1), Err(CartError::PriceLookup(_))));
+    assert_eq!(cart.receipt(), before);
+    assert!(matches!(cart.add("a", 1), Err(CartError::AmountOverflow)));
+    assert_eq!(cart.receipt(), before);
+    cart.add("c", 1).unwrap();
+    assert_eq!(cart.receipt().free_quantities["c"], 1);
+    assert_totals(&cart.snapshot(), "0.08", "0.01", "0.09");
+}
+
+#[test]
+fn discount_reprices_with_product_and_tax_rounds_once_after_discount() {
+    let prices = FakePrices::returning(&["1", "2"]);
+    let mut cart = ShoppingCart::with_every_third_free(&prices);
+    cart.add("a", 3).unwrap();
+    cart.add("a", 1).unwrap();
+    assert_eq!(cart.receipt().free_quantities["a"], 1);
+    assert_eq!(cart.receipt().discount, decimal("2.00"));
+    assert_totals(&cart.snapshot(), "6.00", "0.75", "6.75");
+
+    let prices = FakePrices::returning(&["0.04", "0.04", "1.00"]);
+    let mut cart = ShoppingCart::with_every_third_free(&prices);
+    for product in ["a", "b", "c"] {
+        cart.add(product, 1).unwrap();
+    }
+    assert_totals(&cart.snapshot(), "0.08", "0.01", "0.09");
+}
+
+#[test]
+fn zero_price_units_count_and_maximum_batch_handles_existing_offset() {
+    let prices = FakePrices::returning(&["1", "0", "1"]);
+    let mut cart = ShoppingCart::with_every_third_free(&prices);
+    cart.add("a", 2).unwrap();
+    cart.add("b", u32::MAX).unwrap();
+    assert_eq!(cart.receipt().free_quantities["b"], 1_431_655_765);
+    assert_eq!(cart.receipt().discount, decimal("0.00"));
+    cart.add("a", 1).unwrap();
+    assert_eq!(cart.receipt().free_quantities["a"], 1);
+    assert_totals(&cart.snapshot(), "2.00", "0.25", "2.25");
+}
+
+#[test]
+fn generated_additions_match_a_unit_by_unit_receipt_after_each_add() {
+    // Each digit selects one of two products and a quantity from one through four.
+    for sequence in 0..8_usize.pow(3) {
+        let quotes = FakePrices::returning(&["0.01", "0.00", "2.52"]);
+        let mut cart = ShoppingCart::with_every_third_free(&quotes);
+        let mut units = Vec::new();
+        let mut prices = [0_u32; 2];
+        let mut choices = sequence;
+        for cents in [1, 0, 252] {
+            let choice = choices % 8;
+            choices /= 8;
+            let product = choice % 2;
+            let quantity = 1 + choice / 2;
+            prices[product] = cents;
+            units.extend(std::iter::repeat_n(product, quantity));
+            cart.add(["a", "b"][product], quantity as u32).unwrap();
+            let mut merchandise = 0;
+            let mut savings = 0;
+            let mut counts = [0; 2];
+            let mut free = [0; 2];
+            for (position, &sku) in units.iter().enumerate() {
+                counts[sku] += 1;
+                merchandise += prices[sku];
+                if (position + 1) % 3 == 0 {
+                    free[sku] += 1;
+                    savings += prices[sku];
+                }
+            }
+            let receipt = cart.receipt();
+            for (sku, name) in ["a", "b"].iter().enumerate() {
+                assert_eq!(
+                    receipt
+                        .snapshot
+                        .items
+                        .get(*name)
+                        .map_or(0, |item| item.quantity),
+                    counts[sku]
+                );
+                assert_eq!(
+                    receipt.free_quantities.get(*name).copied().unwrap_or(0),
+                    free[sku]
+                );
+            }
+            let subtotal = merchandise - savings;
+            let tax = (subtotal * 125).div_ceil(1000);
+            let money = |value| Decimal::new(i64::from(value), 2);
+            assert_eq!(receipt.merchandise_subtotal, money(merchandise));
+            assert_eq!(receipt.discount, money(savings));
+            assert_eq!(receipt.snapshot.subtotal, money(subtotal));
+            assert_eq!(receipt.snapshot.tax, money(tax));
+            assert_eq!(receipt.snapshot.total, money(subtotal + tax));
+        }
+    }
+}

@@ -3,7 +3,7 @@ import test from "node:test";
 import { CartSession } from "../web/session.js";
 import { fetchPriceBody } from "../web/transport.js";
 
-const empty = () => ({ items: [], subtotal: "0.00", tax: "0.00", total: "0.00" });
+const empty = () => ({ items: [], merchandise_subtotal: "0.00", discount: "0.00", subtotal: "0.00", tax: "0.00", total: "0.00" });
 const deferred = () => {
   let resolve;
   let reject;
@@ -21,7 +21,7 @@ class RecordingCart {
     if (this.nextError) {
       return JSON.stringify({ ok: false, error: this.nextError, snapshot: this.value });
     }
-    this.value = { ...empty(), items: [{ product, quantity: 1, unit_price: "1.00", line_total: "1.00" }] };
+    this.value = { ...empty(), items: [{ product, quantity: 1, free_quantity: 0, unit_price: "1.00", line_total: "1.00" }] };
     return JSON.stringify({ ok: true, error: null, snapshot: this.value });
   }
 }

@@ -33,3 +33,18 @@ Those PRs retain their actual candidates, findings, checks and release outcomes.
 corrections without repeating volatile test counts.
 
 Final challenge submission requires a separate explicit user instruction.
+
+## Every third unit free
+
+The approved offer repeats across products in addition order, including bulk
+adds. The showcase enables the offer. Library callers select it with
+`ShoppingCart::with_every_third_free`. Failed adds preserve the next award,
+and a reset starts a new group. The displayed receipt identifies free units,
+their savings at the latest prices, and the taxable subtotal.
+
+The fresh clone contained the verified export of original commit
+`a637640a3ffee1e7cabcfcb9671cdd011d5c9869`. Following the user's recovery
+instruction, the library development checkout was reconstructed from its nine
+hash-verified files. Its baseline commit is `3119f7d76e568aa570fbceae0b35febdf5faf815`.
+The library feature commit in `vendor/provenance.json` descends from this
+reconstructed history. The earlier private Git history was unavailable.

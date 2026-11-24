@@ -41,14 +41,16 @@
 
         <aside class="reference-receipt" aria-label="Expected reference example">
           <div class="receipt-top"><span class="receipt-icon" aria-hidden="true">✳</span><span>THE REFERENCE RECEIPT</span><span class="receipt-number">№ 001</span></div>
-          <p class="receipt-caption">A known result to start from.</p>
+          <p class="receipt-caption">Every third unit added is free, across all products.</p>
           <dl class="receipt-lines">
             <div><dt>2 × Cornflakes</dt><dd>5.04</dd></div>
-            <div><dt>1 × Weetabix</dt><dd>9.98</dd></div>
-            <div class="receipt-subtotal"><dt>Subtotal</dt><dd>15.02</dd></div>
-            <div><dt>Tax, rounded up</dt><dd>1.88</dd></div>
+            <div><dt>1 × Weetabix (free)</dt><dd>0.00</dd></div>
+            <div class="receipt-subtotal"><dt>Before discount</dt><dd>15.02</dd></div>
+            <div><dt>Promotion savings</dt><dd>9.98</dd></div>
+            <div><dt>Taxable subtotal</dt><dd>5.04</dd></div>
+            <div><dt>Tax, rounded up</dt><dd>0.63</dd></div>
           </dl>
-          <div class="receipt-total"><span>Expected total</span><strong>16.90</strong></div>
+          <div class="receipt-total"><span>Expected total</span><strong>5.67</strong></div>
           <div class="receipt-bottom"><span class="tiny-dot" aria-hidden="true"></span> TRY IT. INSPECT THE RESULT.</div>
         </aside>
       </section>
@@ -74,7 +76,7 @@
             <div class="panel-heading"><h3 id="catalog-title">The breakfast shelf</h3><span class="subtle-badge">5 products</span></div>
             <div id="product-list" class="product-list"></div>
             <noscript><p class="noscript-note">Enable JavaScript to load the WebAssembly cart. The architecture notes below remain readable.</p></noscript>
-            <p class="catalog-footnote">Each addition gets a price. The newest quote applies to every unit of that product already in the cart.</p>
+            <p class="catalog-footnote">Every third unit is free, including across products and bulk additions. The newest quote applies to every unit of that product already in the cart.</p>
           </section>
 
           <aside class="cart-panel" id="cart" aria-labelledby="cart-title" tabindex="-1">
@@ -92,7 +94,9 @@
               <ul class="cart-lines" id="cart-lines" aria-label="Cart items"></ul>
             </div>
             <dl class="totals">
-              <div><dt>Subtotal</dt><dd id="subtotal">0.00</dd></div>
+              <div><dt>Before discount</dt><dd id="merchandise-subtotal">0.00</dd></div>
+              <div><dt>Promotion savings</dt><dd id="discount">0.00</dd></div>
+              <div><dt>Taxable subtotal</dt><dd id="subtotal">0.00</dd></div>
               <div><dt>Tax <span class="tax-note">12.5%, rounded up</span></dt><dd id="tax">0.00</dd></div>
             </dl>
             <div class="grand-total"><span>Total</span><output id="total" aria-label="Cart total" aria-live="polite">0.00</output></div>
@@ -122,7 +126,7 @@
         <div class="section-heading"><div><p class="eyebrow">02 / PUSH THE EDGES</p><h2 id="scenarios-title">The interesting part is what happens next.</h2></div><p class="section-note">Each scenario starts a fresh sample cart.</p></div>
         <div class="scenario-grid">
           <article class="scenario-card"><div class="scenario-top"><span class="scenario-number">01</span><span class="scenario-tag">ROUNDING</span></div><h3>A fraction becomes a cent.</h3><p>Add one item at 0.01. Tax is calculated on the subtotal, then rounded toward the next whole cent.</p><div class="scenario-formula">0.01 × 12.5% <span aria-hidden="true">→</span> <strong>0.01 tax</strong></div><button class="scenario-button" type="button" data-scenario="rounding" data-engine disabled>Try rounding <span aria-hidden="true">↗</span></button></article>
-          <article class="scenario-card"><div class="scenario-top"><span class="scenario-number">02</span><span class="scenario-tag">REPRICING</span></div><h3>Same product. New price.</h3><p>Add two cornflakes at 2.52, then one at 3.00. The quantities combine and all three use the latest quote.</p><div class="scenario-formula">2 + 1 units <span aria-hidden="true">→</span> <strong>3 at 3.00</strong></div><button class="scenario-button" type="button" data-scenario="repricing" data-engine disabled>Try repricing <span aria-hidden="true">↗</span></button></article>
+          <article class="scenario-card"><div class="scenario-top"><span class="scenario-number">02</span><span class="scenario-tag">REPRICING</span></div><h3>Same product. New price.</h3><p>Add two cornflakes at 2.52, then one at 3.00. All three use the new quote and the third unit is free.</p><div class="scenario-formula">2 + 1 units <span aria-hidden="true">→</span> <strong>2 paid, 1 free</strong></div><button class="scenario-button" type="button" data-scenario="repricing" data-engine disabled>Try repricing <span aria-hidden="true">↗</span></button></article>
           <article class="scenario-card"><div class="scenario-top"><span class="scenario-number">03</span><span class="scenario-tag">VALIDATION</span></div><h3>A failed add stays failed.</h3><p>Start with one cornflakes, then try a price of 2.525. Rust rejects the fractional cent and preserves the cart.</p><div class="scenario-formula">Invalid quote <span aria-hidden="true">→</span> <strong>same cart</strong></div><button class="scenario-button" type="button" data-scenario="rejection" data-engine disabled>Try a rejected price <span aria-hidden="true">↗</span></button></article>
         </div>
       </section>

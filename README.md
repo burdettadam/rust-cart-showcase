@@ -12,8 +12,9 @@ challenge submission.
 
 ## Try it
 
-Run the example: **two cornflakes and one weetabix produce 15.02 subtotal,
-1.88 tax and 16.90 total**. Then try rounding, repricing or a rejected price.
+Run the example: **two cornflakes at 2.52 each followed by one weetabix at 9.98
+make the weetabix free**. Every third unit earns the offer. The sample receipt
+shows 9.98 savings, 5.04 taxable subtotal, 0.63 tax and **5.67 total**. Then try rounding, repricing or a rejected price.
 The custom response form lets you send raw price JSON to Rust and inspect the
 resulting cart snapshot.
 
@@ -57,8 +58,8 @@ record the checks and deployments. Production Rust line coverage must be at leas
 **91%**; measured results belong to their actual CI runs.
 
 The [provenance manifest](vendor/provenance.json) identifies the exact library
-export. Its canonical repository is private, but this companion builds without
-those credentials. The live page's source and architecture links follow its
+export. The original library was private. The promotion source and its recovered
+baseline are available on the [library branch](https://github.com/burdettadam/rust-cart-showcase/tree/library/every-third-free). The live page's source and architecture links follow its
 displayed build commit when metadata is available.
 
 ## AI contribution

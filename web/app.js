@@ -7,6 +7,8 @@ const elements = {
   cartLines: byId("cart-lines"),
   empty: byId("empty-cart"),
   lineCount: byId("line-count"),
+  merchandise: byId("merchandise-subtotal"),
+  discount: byId("discount"),
   subtotal: byId("subtotal"),
   tax: byId("tax"),
   total: byId("total"),
@@ -124,16 +126,21 @@ function render(state) {
     const quote = node("span", "cart-line-quote");
     quote.append(node("span", "", `${item.quantity} ×`), document.createTextNode(" "), node("span", "", item.unit_price));
     info.append(node("strong", "", product.name), quote);
+    if (item.free_quantity > 0) info.append(node("span", "cart-line-quote", `${item.free_quantity} free`));
     row.append(productMark(product, "cart-line-mark"), info, node("span", "line-total", item.line_total));
     fragment.append(row);
   }
   elements.cartLines.replaceChildren(fragment);
   elements.empty.hidden = snapshot.items.length > 0;
   elements.lineCount.textContent = `${snapshot.items.length} ${snapshot.items.length === 1 ? "line" : "lines"}`;
+  elements.merchandise.textContent = snapshot.merchandise_subtotal;
+  elements.discount.textContent = snapshot.discount;
   elements.subtotal.textContent = snapshot.subtotal;
   elements.tax.textContent = snapshot.tax;
   elements.total.textContent = snapshot.total;
   elements.mobileTotal.textContent = snapshot.total;
+  elements.merchandise.parentElement.classList.toggle("has-long-amount", snapshot.merchandise_subtotal.length > 12);
+  elements.discount.parentElement.classList.toggle("has-long-amount", snapshot.discount.length > 12);
   elements.subtotal.parentElement.classList.toggle("has-long-amount", snapshot.subtotal.length > 12);
   elements.tax.parentElement.classList.toggle("has-long-amount", snapshot.tax.length > 12);
   elements.total.parentElement.classList.toggle("has-long-amount", snapshot.total.length > 10);

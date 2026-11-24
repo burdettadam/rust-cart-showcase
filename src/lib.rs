@@ -4,9 +4,7 @@
 
 use std::{cell::Cell, convert::Infallible, rc::Rc};
 
-use equal_experts_shopping_cart::{
-    CartSnapshot, PriceProvider, ShoppingCart, parse_price_response,
-};
+use equal_experts_shopping_cart::{CartReceipt, PriceProvider, ShoppingCart, parse_price_response};
 use rust_decimal::Decimal;
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
@@ -40,7 +38,7 @@ impl BrowserCart {
     pub fn new() -> Self {
         let price = Rc::new(Cell::new(Decimal::ZERO));
         Self {
-            cart: ShoppingCart::new(BrowserPrice(Rc::clone(&price))),
+            cart: ShoppingCart::with_every_third_free(BrowserPrice(Rc::clone(&price))),
             price,
         }
     }
@@ -51,18 +49,18 @@ impl BrowserCart {
         serde_json::json!({
             "ok": result.is_ok(),
             "error": result.err(),
-            "snapshot": view(self.cart.snapshot()),
+            "snapshot": view(self.cart.receipt()),
         })
         .to_string()
     }
 
     pub fn snapshot(&self) -> String {
-        serde_json::json!(view(self.cart.snapshot())).to_string()
+        serde_json::json!(view(self.cart.receipt())).to_string()
     }
 
     /// Starts a new local session; no server state or persistence exists.
     pub fn reset(&mut self) -> String {
-        self.cart = ShoppingCart::new(BrowserPrice(Rc::clone(&self.price)));
+        self.cart = ShoppingCart::with_every_third_free(BrowserPrice(Rc::clone(&self.price)));
         self.snapshot()
     }
 }
@@ -87,6 +85,7 @@ impl BrowserCart {
 struct ItemView {
     product: String,
     quantity: u32,
+    free_quantity: u32,
     unit_price: String,
     line_total: String,
 }
@@ -94,24 +93,33 @@ struct ItemView {
 #[derive(Serialize)]
 struct SnapshotView {
     items: Vec<ItemView>,
+    merchandise_subtotal: String,
+    discount: String,
     subtotal: String,
     tax: String,
     total: String,
 }
 
-fn view(snapshot: CartSnapshot) -> SnapshotView {
+fn view(receipt: CartReceipt) -> SnapshotView {
+    let snapshot = receipt.snapshot;
     SnapshotView {
         items: snapshot
             .items
             .into_iter()
-            .map(|(product, item)| ItemView {
-                product,
-                quantity: item.quantity,
-                unit_price: format!("{:.2}", item.unit_price),
-                // The core snapshot already guarantees this line fits u64 cents.
-                line_total: format!("{:.2}", item.unit_price * Decimal::from(item.quantity)),
+            .map(|(product, item)| {
+                let free_quantity = receipt.free_quantities.get(&product).copied().unwrap_or(0);
+                let paid_quantity = item.quantity - free_quantity;
+                ItemView {
+                    product,
+                    quantity: item.quantity,
+                    free_quantity,
+                    unit_price: format!("{:.2}", item.unit_price),
+                    line_total: format!("{:.2}", item.unit_price * Decimal::from(paid_quantity)),
+                }
             })
             .collect(),
+        merchandise_subtotal: format!("{:.2}", receipt.merchandise_subtotal),
+        discount: format!("{:.2}", receipt.discount),
         subtotal: format!("{:.2}", snapshot.subtotal),
         tax: format!("{:.2}", snapshot.tax),
         total: format!("{:.2}", snapshot.total),
