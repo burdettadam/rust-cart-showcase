@@ -110,9 +110,9 @@ impl<P: PriceProvider> ShoppingCart<P> {
         let cents = price_in_cents(price).ok_or(CartError::InvalidPrice(price))?;
 
         let mut free_quantities = self.receipt.free_quantities.clone();
-        let free_units = self.free_units_for_addition(quantity);
-        if free_units > 0 {
-            *free_quantities.entry(product.to_owned()).or_default() += free_units;
+        let new_free_units = self.free_units_for_addition(quantity);
+        if new_free_units > 0 {
+            *free_quantities.entry(product.to_owned()).or_default() += new_free_units;
         }
         let mut items = self.receipt.snapshot.items.clone();
         items.insert(
