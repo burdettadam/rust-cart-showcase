@@ -79,7 +79,7 @@ The promotion library is available on the showcase remote's
 
 ```sh
 git fetch origin library/every-third-free
-git diff --exit-code b32927ebe16505cd916674655678f0a764d31a95 HEAD:vendor/shopping-cart
+git diff --exit-code 6b5cef238cd52a80ae3071a6d5ed78835c2cb6c7 HEAD:vendor/shopping-cart
 ```
 
 Change business rules in the library checkout first. After reviewing that
