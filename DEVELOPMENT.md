@@ -74,12 +74,12 @@ playwright-cli -s=promotion close
 
 ## Update the library export
 
-The promotion library is available on the showcase remote's
-`library/every-third-free` recovery branch. Verify its export from a fresh clone:
+The cart library is available on the showcase remote's
+`library/decimal-money` recovery branch. Verify its export from a fresh clone:
 
 ```sh
-git fetch origin library/every-third-free
-git diff --exit-code 6b5cef238cd52a80ae3071a6d5ed78835c2cb6c7 HEAD:vendor/shopping-cart
+git fetch origin library/decimal-money
+git diff --exit-code dd5cb58ecd4876ea1ec2bfc65403ef6f1f8b34f6 HEAD:vendor/shopping-cart
 ```
 
 Change business rules in the library checkout first. After reviewing that

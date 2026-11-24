@@ -493,3 +493,47 @@ fn generated_additions_match_a_unit_by_unit_receipt_after_each_add() {
         }
     }
 }
+
+#[test]
+fn decimal_tax_preserves_cent_boundaries_at_small_and_large_amounts() {
+    for base_cents in [0_u64, 16_000_000_000_000_000_000] {
+        for extra_cents in 0..16 {
+            let subtotal_cents = base_cents + extra_cents;
+            let price = Decimal::from_i128_with_scale(i128::from(subtotal_cents), 2);
+            let prices = FakePrices::returning(&[&price.to_string()]);
+            let mut cart = ShoppingCart::new(&prices);
+            cart.add("sample", 1).unwrap();
+
+            let expected_tax_cents = subtotal_cents.div_ceil(8);
+            let expected_tax = Decimal::from_i128_with_scale(i128::from(expected_tax_cents), 2);
+            let expected_total = price + expected_tax;
+            let state = cart.snapshot();
+            assert_totals(
+                &state,
+                &price.to_string(),
+                &expected_tax.to_string(),
+                &expected_total.to_string(),
+            );
+        }
+    }
+}
+
+#[test]
+fn receipt_money_keeps_two_decimal_places_including_zero_values() {
+    for (price, quantity) in [("0", u32::MAX), ("1", 1), ("1", 3)] {
+        let prices = FakePrices::returning(&[price]);
+        let mut cart = ShoppingCart::with_every_third_free(&prices);
+        cart.add("sample", quantity).unwrap();
+        let receipt = cart.receipt();
+        for amount in [
+            receipt.snapshot.items["sample"].unit_price,
+            receipt.merchandise_subtotal,
+            receipt.discount,
+            receipt.snapshot.subtotal,
+            receipt.snapshot.tax,
+            receipt.snapshot.total,
+        ] {
+            assert_eq!(amount.scale(), 2, "{price} × {quantity}: {amount}");
+        }
+    }
+}

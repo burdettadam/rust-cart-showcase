@@ -3,7 +3,7 @@ use serde::Deserialize;
 use serde_json::value::RawValue;
 use thiserror::Error;
 
-use crate::cart::price_in_cents;
+use crate::cart::checked_money;
 
 pub const MAX_PRICE_RESPONSE_BYTES: usize = 16 * 1024;
 
@@ -54,7 +54,7 @@ pub fn parse_price_response(body: &str) -> Result<Decimal, PriceResponseError> {
     };
     let price = Decimal::from_str_exact(normalized_price)
         .map_err(|_| PriceResponseError::InvalidPrice(raw_price.to_owned()))?;
-    if price_in_cents(price).is_none() {
+    if checked_money(price).is_none() {
         return Err(PriceResponseError::InvalidPrice(raw_price.to_owned()));
     }
     Ok(price)
