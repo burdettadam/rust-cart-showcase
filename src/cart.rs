@@ -3,6 +3,11 @@ use std::collections::BTreeMap;
 use rust_decimal::{Decimal, RoundingStrategy};
 use thiserror::Error;
 
+const MONEY_SCALE: u32 = 2;
+const TAX_RATE: Decimal = Decimal::from_parts(125, 0, 0, false, 3);
+// Preserve the established maximum of 184467440737095516.15.
+const MAX_AMOUNT: Decimal = Decimal::from_parts(u32::MAX, u32::MAX, 0, false, MONEY_SCALE);
+
 /// Retrieves a current unit price without changing the cart.
 pub trait PriceProvider {
     type Error: std::error::Error + 'static;
@@ -35,6 +40,23 @@ pub struct CartReceipt {
     pub free_quantities: BTreeMap<String, u32>,
 }
 
+impl CartReceipt {
+    fn empty() -> Self {
+        let zero = Decimal::new(0, MONEY_SCALE);
+        Self {
+            snapshot: CartSnapshot {
+                items: BTreeMap::new(),
+                subtotal: zero,
+                tax: zero,
+                total: zero,
+            },
+            merchandise_subtotal: zero,
+            discount: zero,
+            free_quantities: BTreeMap::new(),
+        }
+    }
+}
+
 #[derive(Debug, Error)]
 pub enum CartError<E: std::error::Error + 'static> {
     #[error("quantity must be a positive integer")]
@@ -62,17 +84,7 @@ impl<P: PriceProvider> ShoppingCart<P> {
     pub fn new(prices: P) -> Self {
         Self {
             prices,
-            receipt: CartReceipt {
-                snapshot: CartSnapshot {
-                    items: BTreeMap::new(),
-                    subtotal: Decimal::new(0, 2),
-                    tax: Decimal::new(0, 2),
-                    total: Decimal::new(0, 2),
-                },
-                merchandise_subtotal: Decimal::new(0, 2),
-                discount: Decimal::new(0, 2),
-                free_quantities: BTreeMap::new(),
-            },
+            receipt: CartReceipt::empty(),
             every_third_free: false,
         }
     }
@@ -165,12 +177,11 @@ pub(crate) fn valid_product(product: &str) -> bool {
 }
 
 pub(crate) fn checked_money(amount: Decimal) -> Option<Decimal> {
-    let maximum = Decimal::from_i128_with_scale(18_446_744_073_709_551_615, 2);
     let mut amount = amount.normalize();
-    if amount < Decimal::ZERO || amount > maximum || amount.scale() > 2 {
+    if amount < Decimal::ZERO || amount > MAX_AMOUNT || amount.scale() > MONEY_SCALE {
         return None;
     }
-    amount.rescale(2);
+    amount.rescale(MONEY_SCALE);
     Some(amount)
 }
 
@@ -178,8 +189,8 @@ fn calculate_receipt(
     items: BTreeMap<String, CartItem>,
     free_quantities: BTreeMap<String, u32>,
 ) -> Option<CartReceipt> {
-    let mut merchandise = Decimal::new(0, 2);
-    let mut discount = Decimal::new(0, 2);
+    let mut merchandise = Decimal::new(0, MONEY_SCALE);
+    let mut discount = Decimal::new(0, MONEY_SCALE);
     for (product, item) in &items {
         let line_total = item.unit_price.checked_mul(Decimal::from(item.quantity))?;
         merchandise = checked_money(merchandise.checked_add(line_total)?)?;
@@ -189,11 +200,7 @@ fn calculate_receipt(
     }
     let discount = checked_money(discount)?;
     let subtotal = checked_money(merchandise.checked_sub(discount)?)?;
-    let tax = checked_money(
-        subtotal
-            .checked_mul(Decimal::new(125, 3))?
-            .round_dp_with_strategy(2, RoundingStrategy::ToPositiveInfinity),
-    )?;
+    let tax = calculate_tax(subtotal)?;
     let total = checked_money(subtotal.checked_add(tax)?)?;
     Some(CartReceipt {
         snapshot: CartSnapshot {
@@ -206,4 +213,11 @@ fn calculate_receipt(
         discount,
         free_quantities,
     })
+}
+
+fn calculate_tax(subtotal: Decimal) -> Option<Decimal> {
+    let tax = subtotal
+        .checked_mul(TAX_RATE)?
+        .round_dp_with_strategy(MONEY_SCALE, RoundingStrategy::ToPositiveInfinity);
+    checked_money(tax)
 }
