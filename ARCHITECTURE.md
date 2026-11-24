@@ -87,8 +87,13 @@ internals; this project does not claim a transitive unsafe-code audit.
 The core uses checked integer cents. At 12.5%, tax in cents is one eighth of the
 subtotal in cents, rounded toward positive infinity. It computes quotient plus
 one when the remainder is nonzero. An exact cent stays unchanged. Tax is applied
-once to the complete subtotal, not independently to each line. For 1502 cents,
-187.75 tax cents becomes 188, making the total 1690 cents.
+once to the subtotal after discounts. The showcase opts in to the library’s repeating
+promotion. Every third successfully added unit is free in addition order, across
+products. A bulk add counts each unit. The receipt retains free quantities when
+a product is repriced and values the savings at its latest quote. The reference
+basket costs 1502 cents before discount. Subtracting 998 cents leaves 504 taxable
+cents, 63 cents tax and a total of 567 cents. The library’s default constructor
+continues to use standard pricing.
 
 ### 5. Why does the WASM method take quantity as a string?
 
@@ -143,7 +148,7 @@ Quantities are positive `u32` values. Every monetary amount fits `u64` cents.
 Prices must be nonnegative exact cents; extra significant fractional digits and
 exponent notation are rejected. Harmless trailing zeroes are accepted. Product
 IDs use lowercase ASCII slug syntax. The demo has no persistence, inventory,
-authentication, checkout, discounts or multi-currency behavior. Refreshing the
+authentication, checkout or multi-currency behavior. Refreshing the
 page creates a new cart. These limits preserve the original accepted rules.
 
 ### 11. Does over 90% coverage prove correctness?

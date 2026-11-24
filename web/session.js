@@ -11,7 +11,7 @@ export const PRODUCTS = Object.freeze([
 const fixtureBodies = new Map(PRODUCTS.map(({ id, price }) => [id, `{"price":${price}}`]));
 const scenarios = {
   example: {
-    message: "Reference example loaded: two cornflakes and one weetabix. Inspect the totals calculated by Rust.",
+    message: "Reference example loaded. The third unit, Weetabix, is free.",
     steps: [["cornflakes", "1", "{\"price\":2.52}"], ["cornflakes", "1", "{\"price\":2.52}"], ["weetabix", "1", "{\"price\":9.98}"]],
   },
   rounding: {
@@ -19,7 +19,7 @@ const scenarios = {
     steps: [["cheerios", "1", "{\"price\":0.01}"]],
   },
   repricing: {
-    message: "Repricing scenario loaded: two cornflakes at 2.52, then one at 3.00. The newest price applies to all three.",
+    message: "Repricing scenario loaded: two cornflakes at 2.52, then one at 3.00. The newest price applies to all three, including the free unit.",
     steps: [["cornflakes", "2", "{\"price\":2.52}"], ["cornflakes", "1", "{\"price\":3.00}"]],
   },
   rejection: {

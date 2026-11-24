@@ -25,6 +25,16 @@ pub struct CartSnapshot {
     pub total: Decimal,
 }
 
+/// Receipt details for the last successful addition. The snapshot subtotal is taxable.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CartReceipt {
+    pub snapshot: CartSnapshot,
+    pub merchandise_subtotal: Decimal,
+    pub discount: Decimal,
+    /// Products with at least one unit awarded by the promotion.
+    pub free_quantities: BTreeMap<String, u32>,
+}
+
 #[derive(Debug, Error)]
 pub enum CartError<E: std::error::Error + 'static> {
     #[error("quantity must be a positive integer")]
@@ -44,19 +54,34 @@ pub enum CartError<E: std::error::Error + 'static> {
 /// A synchronous cart with exact cents, bounded by `u64::MAX` cents per amount.
 pub struct ShoppingCart<P: PriceProvider> {
     prices: P,
-    state: CartSnapshot,
+    receipt: CartReceipt,
+    units_in_group: Option<u8>,
 }
 
 impl<P: PriceProvider> ShoppingCart<P> {
     pub fn new(prices: P) -> Self {
         Self {
             prices,
-            state: CartSnapshot {
-                items: BTreeMap::new(),
-                subtotal: money(0),
-                tax: money(0),
-                total: money(0),
+            receipt: CartReceipt {
+                snapshot: CartSnapshot {
+                    items: BTreeMap::new(),
+                    subtotal: money(0),
+                    tax: money(0),
+                    total: money(0),
+                },
+                merchandise_subtotal: money(0),
+                discount: money(0),
+                free_quantities: BTreeMap::new(),
             },
+            units_in_group: None,
+        }
+    }
+
+    /// Every third successfully added unit is free, across products and calls.
+    pub fn with_every_third_free(prices: P) -> Self {
+        Self {
+            units_in_group: Some(0),
+            ..Self::new(prices)
         }
     }
 
@@ -70,8 +95,9 @@ impl<P: PriceProvider> ShoppingCart<P> {
             return Err(CartError::InvalidProduct(product.to_owned()));
         }
 
-        let quantity = self
-            .state
+        let combined_quantity = self
+            .receipt
+            .snapshot
             .items
             .get(product)
             .map_or(0, |item| item.quantity)
@@ -83,22 +109,37 @@ impl<P: PriceProvider> ShoppingCart<P> {
             .map_err(CartError::PriceLookup)?;
         let cents = price_in_cents(price).ok_or(CartError::InvalidPrice(price))?;
 
-        let mut items = self.state.items.clone();
+        let mut free_quantities = self.receipt.free_quantities.clone();
+        let next_group = self.units_in_group.map(|previous| {
+            let units = u64::from(previous) + u64::from(quantity);
+            let free = (units / 3) as u32;
+            if free > 0 {
+                *free_quantities.entry(product.to_owned()).or_default() += free;
+            }
+            (units % 3) as u8
+        });
+        let mut items = self.receipt.snapshot.items.clone();
         items.insert(
             product.to_owned(),
             CartItem {
-                quantity,
+                quantity: combined_quantity,
                 unit_price: money(cents),
             },
         );
-        let next = calculate_snapshot(items).ok_or(CartError::AmountOverflow)?;
-        self.state = next;
+        let receipt = calculate_receipt(items, free_quantities).ok_or(CartError::AmountOverflow)?;
+        self.receipt = receipt;
+        self.units_in_group = next_group;
         Ok(())
     }
 
     /// Returns the last validated state without retrieving prices again.
     pub fn snapshot(&self) -> CartSnapshot {
-        self.state.clone()
+        self.receipt.snapshot.clone()
+    }
+
+    /// Returns totals and the awarded quantities without retrieving prices again.
+    pub fn receipt(&self) -> CartReceipt {
+        self.receipt.clone()
     }
 }
 
@@ -124,18 +165,31 @@ pub(crate) fn price_in_cents(price: Decimal) -> Option<u64> {
         .checked_mul(10_u64.pow(2 - price.scale()))
 }
 
-fn calculate_snapshot(items: BTreeMap<String, CartItem>) -> Option<CartSnapshot> {
-    let subtotal = items.values().try_fold(0_u64, |subtotal, item| {
-        let line = price_in_cents(item.unit_price)?.checked_mul(u64::from(item.quantity))?;
-        subtotal.checked_add(line)
-    })?;
+fn calculate_receipt(
+    items: BTreeMap<String, CartItem>,
+    free_quantities: BTreeMap<String, u32>,
+) -> Option<CartReceipt> {
+    let mut merchandise = 0_u64;
+    let mut discount = 0_u64;
+    for (product, item) in &items {
+        let price = price_in_cents(item.unit_price)?;
+        merchandise = merchandise.checked_add(price.checked_mul(u64::from(item.quantity))?)?;
+        let free = free_quantities.get(product).copied().unwrap_or(0);
+        discount = discount.checked_add(price.checked_mul(u64::from(free))?)?;
+    }
+    let subtotal = merchandise.checked_sub(discount)?;
     let tax = subtotal / 8 + u64::from(subtotal % 8 != 0);
     let total = subtotal.checked_add(tax)?;
-    Some(CartSnapshot {
-        items,
-        subtotal: money(subtotal),
-        tax: money(tax),
-        total: money(total),
+    Some(CartReceipt {
+        snapshot: CartSnapshot {
+            items,
+            subtotal: money(subtotal),
+            tax: money(tax),
+            total: money(total),
+        },
+        merchandise_subtotal: money(merchandise),
+        discount: money(discount),
+        free_quantities,
     })
 }
 

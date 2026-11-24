@@ -27,7 +27,7 @@ mod cart;
 mod http_price_client;
 mod price_response;
 
-pub use cart::{CartError, CartItem, CartSnapshot, PriceProvider, ShoppingCart};
+pub use cart::{CartError, CartItem, CartReceipt, CartSnapshot, PriceProvider, ShoppingCart};
 #[cfg(feature = "native-http")]
 pub use http_price_client::{HttpPriceClient, PriceClientError};
 pub use price_response::{MAX_PRICE_RESPONSE_BYTES, PriceResponseError, parse_price_response};

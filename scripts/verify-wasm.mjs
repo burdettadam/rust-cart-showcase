@@ -11,14 +11,26 @@ const snapshot = () => JSON.parse(cart.snapshot());
 const add = (product, quantity, raw) => JSON.parse(cart.add(product, quantity, raw));
 try {
   check('empty WASM cart', () => assert.equal(snapshot().total, '0.00'));
-  check('official example executes through compiled WASM', () => {
+  check('third unit is free on the compiled WASM receipt', () => {
     assert.equal(add('cornflakes', '1', '{"price":2.52}').ok, true);
     assert.equal(add('cornflakes', '1', '{"price":2.52}').ok, true);
     assert.equal(add('weetabix', '1', '{"price":9.98}').ok, true);
     assert.deepEqual(snapshot(), { items: [
-      { product: 'cornflakes', quantity: 2, unit_price: '2.52', line_total: '5.04' },
-      { product: 'weetabix', quantity: 1, unit_price: '9.98', line_total: '9.98' }
-    ], subtotal: '15.02', tax: '1.88', total: '16.90' });
+      { product: 'cornflakes', quantity: 2, free_quantity: 0, unit_price: '2.52', line_total: '5.04' },
+      { product: 'weetabix', quantity: 1, free_quantity: 1, unit_price: '9.98', line_total: '0.00' }
+    ], merchandise_subtotal: '15.02', discount: '9.98', subtotal: '5.04', tax: '0.63', total: '5.67' });
+  });
+  check('bulk add awards the sixth unit and reset clears progress', () => {
+    const repeated = add('cornflakes', '3', '{"price":2.52}').snapshot;
+    assert.deepEqual(repeated.items.map(item => item.free_quantity), [1, 1]);
+    assert.equal(repeated.discount, '12.50');
+    assert.equal(repeated.total, '11.34');
+    cart.reset();
+    add('cornflakes', '2', '{"price":2.52}');
+    cart.reset();
+    const fresh = add('weetabix', '1', '{"price":9.98}').snapshot;
+    assert.equal(fresh.discount, '0.00');
+    assert.equal(fresh.total, '11.23');
   });
   check('failed inputs preserve compiled-WASM state', () => {
     const before = snapshot();
@@ -76,7 +88,7 @@ try {
     const other = new BrowserCart();
     try { assert.equal(JSON.parse(other.snapshot()).total, '0.00'); }
     finally { other.free(); }
-    assert.deepEqual(JSON.parse(cart.reset()), { items: [], subtotal: '0.00', tax: '0.00', total: '0.00' });
+    assert.deepEqual(JSON.parse(cart.reset()), { items: [], merchandise_subtotal: '0.00', discount: '0.00', subtotal: '0.00', tax: '0.00', total: '0.00' });
   });
 } finally { cart.free(); }
 console.log(JSON.stringify({ runtime: process.version, target: 'wasm32-unknown-unknown', passed: checks.length, checks }, null, 2));

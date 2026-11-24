@@ -12,8 +12,9 @@ challenge submission.
 
 ## Try it
 
-Run the example: **two cornflakes and one weetabix produce 15.02 subtotal,
-1.88 tax and 16.90 total**. Then try rounding, repricing or a rejected price.
+Run the example: **two cornflakes at 2.52 each followed by one weetabix at 9.98
+make the weetabix free**. Every third unit earns the offer. The sample receipt
+shows 9.98 savings, 5.04 taxable subtotal, 0.63 tax and **5.67 total**. Then try rounding, repricing or a rejected price.
 The custom response form lets you send raw price JSON to Rust and inspect the
 resulting cart snapshot.
 

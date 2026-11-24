@@ -11,7 +11,7 @@ fn add(cart: &mut BrowserCart, product: &str, quantity: &str, response: &str) ->
 
 #[test]
 fn empty_and_default_instances_have_exact_zero_totals() {
-    let expected = json!({"items": [], "subtotal": "0.00", "tax": "0.00", "total": "0.00"});
+    let expected = json!({"items": [], "merchandise_subtotal": "0.00", "discount": "0.00", "subtotal": "0.00", "tax": "0.00", "total": "0.00"});
     assert_eq!(snapshot(&BrowserCart::new()), expected);
     assert_eq!(snapshot(&BrowserCart::default()), expected);
 }
@@ -32,9 +32,9 @@ fn supplied_example_returns_exact_strings_and_combined_quantities() {
         snapshot(&cart),
         json!({
             "items": [
-                {"product": "cornflakes", "quantity": 2, "unit_price": "2.52", "line_total": "5.04"},
-                {"product": "weetabix", "quantity": 1, "unit_price": "9.98", "line_total": "9.98"}
-            ], "subtotal": "15.02", "tax": "1.88", "total": "16.90"
+                {"product": "cornflakes", "quantity": 2, "free_quantity": 0, "unit_price": "2.52", "line_total": "5.04"},
+                {"product": "weetabix", "quantity": 1, "free_quantity": 1, "unit_price": "9.98", "line_total": "0.00"}
+            ], "merchandise_subtotal": "15.02", "discount": "9.98", "subtotal": "5.04", "tax": "0.63", "total": "5.67"
         })
     );
 }

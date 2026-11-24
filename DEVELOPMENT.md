@@ -62,6 +62,16 @@ Open `http://localhost:8080`. The default artifact verifier permits previews bui
 with changes; the page labels them `+ local changes`. Serve over HTTP, not
 `file://`. A normal source ZIP lacks the Git objects required for build identity.
 
+To exercise the promotion in Chrome against the running preview, use Playwright CLI
+from the repository root. The browser test checks the third and sixth units and
+a reset midway through a group.
+
+```sh
+playwright-cli -s=promotion open http://localhost:8080 --browser=chrome
+playwright-cli -s=promotion run-code --filename tests/promotion.browser.js
+playwright-cli -s=promotion close
+```
+
 ## Update the library export
 
 Change business rules in the canonical library first. After reviewing that
