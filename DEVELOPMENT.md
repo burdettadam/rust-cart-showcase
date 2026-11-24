@@ -74,7 +74,15 @@ playwright-cli -s=promotion close
 
 ## Update the library export
 
-Change business rules in the canonical library first. After reviewing that
+The promotion library is available on the showcase remote's
+`library/every-third-free` recovery branch. Verify its export from a fresh clone:
+
+```sh
+git fetch origin library/every-third-free
+git diff --exit-code ea8c1f70ffb29a469c4a400b5f738b28419a9a65 HEAD:vendor/shopping-cart
+```
+
+Change business rules in the library checkout first. After reviewing that
 candidate, export its exact commit:
 
 ```sh

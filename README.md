@@ -58,8 +58,8 @@ record the checks and deployments. Production Rust line coverage must be at leas
 **91%**; measured results belong to their actual CI runs.
 
 The [provenance manifest](vendor/provenance.json) identifies the exact library
-export. Its canonical repository is private, but this companion builds without
-those credentials. The live page's source and architecture links follow its
+export. The original library was private. The promotion source and its recovered
+baseline are available on the [library branch](https://github.com/burdettadam/rust-cart-showcase/tree/library/every-third-free). The live page's source and architecture links follow its
 displayed build commit when metadata is available.
 
 ## AI contribution

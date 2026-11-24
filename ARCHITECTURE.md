@@ -41,16 +41,16 @@ preserves both purposes. The companion is independently buildable and contains a
 pinned export of the library's Cargo inputs, source and tests. The original
 assignment and private completion link are not exported or deployed.
 
-This is deliberate source vendoring from the private library fork into the
-independently buildable public companion.
-The manifest records the original source commit and file hashes. Public readers
-can inspect the exported source and run `verify_vendor.py`, which rejects missing,
-added or changed files relative to the manifest. This checks consistency; it is
-not a signature or independent proof of trust. Maintainers and reviewers with
-access to the private library's Git history can compare the export against the
-recorded source commit to verify export fidelity. Vendoring requires an explicit
-update step; a pinned Git dependency is an alternative if the Pages build has
-appropriate private repository access.
+The original exports came from the private library fork. The repeating promotion
+was developed in a separate library checkout recovered from its last verified
+export. The public `library/every-third-free` branch retains that checkout's
+source history. The [work record](PLANS.md#every-third-unit-free) identifies the
+original export and recovered baseline.
+
+The manifest records the exported commit, tree and SHA-256 file hashes.
+`python3 scripts/verify_vendor.py` checks the local files against those hashes.
+For this revision, fetch the library branch and compare its pinned source tree
+with the vendored directory using the [development guide](DEVELOPMENT.md#update-the-library-export).
 
 ## Questions and answers
 
