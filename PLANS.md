@@ -48,3 +48,16 @@ instruction, the library development checkout was reconstructed from its nine
 hash-verified files. Its baseline commit is `3119f7d76e568aa570fbceae0b35febdf5faf815`.
 The library feature commit in `vendor/provenance.json` descends from this
 reconstructed history. The earlier private Git history was unavailable.
+
+## Decimal money arithmetic
+
+The user requested a separate branch and PR to calculate cart money with
+`rust_decimal::Decimal`. This builds on the repeating promotion in PR #6,
+so `feat/decimal-money` targets `feat/every-third-free`.
+
+Use checked Decimal multiplication, addition and subtraction throughout receipts.
+Apply the existing 12.5% rate with explicit upward rounding to two decimal places.
+Keep exact-cent validation, the established maximum amount, quantity bounds and
+atomic errors. Verify existing results and rounding boundaries at small and
+large amounts. The corresponding library source is retained on
+`library/decimal-money`.

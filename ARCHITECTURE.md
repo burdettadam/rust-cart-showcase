@@ -43,7 +43,7 @@ assignment and private completion link are not exported or deployed.
 
 The original exports came from the private library fork. The repeating promotion
 was developed in a separate library checkout recovered from its last verified
-export. The public `library/every-third-free` branch retains that checkout's
+export. The public `library/decimal-money` branch retains that checkout's
 source history. The [work record](PLANS.md#every-third-unit-free) identifies the
 original export and recovered baseline.
 
@@ -84,10 +84,10 @@ internals; this project does not claim a transitive unsafe-code audit.
 
 ### 4. How does tax rounding work?
 
-The core uses checked integer cents. At 12.5%, tax in cents is one eighth of the
-subtotal in cents, rounded toward positive infinity. It computes quotient plus
-one when the remainder is nonzero. An exact cent stays unchanged. Tax is applied
-once to the subtotal after discounts. The showcase opts in to the library’s repeating
+The core uses checked `Decimal` arithmetic for prices, discounts and totals.
+It multiplies the discounted subtotal by 0.125, then rounds to two decimal places
+with `RoundingStrategy::ToPositiveInfinity`. An exact cent stays unchanged.
+Tax is applied once to the subtotal after discounts. The showcase opts in to the library’s repeating
 promotion. Every third successfully added unit is free in addition order, across
 products. A bulk add counts each unit. The receipt retains free quantities when
 a product is repriced and values the savings at its latest quote. The reference

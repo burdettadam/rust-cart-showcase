@@ -59,7 +59,7 @@ record the checks and deployments. Production Rust line coverage must be at leas
 
 The [provenance manifest](vendor/provenance.json) identifies the exact library
 export. The original library was private. The promotion source and its recovered
-baseline are available on the [library branch](https://github.com/burdettadam/rust-cart-showcase/tree/library/every-third-free). The live page's source and architecture links follow its
+baseline are available on the [library branch](https://github.com/burdettadam/rust-cart-showcase/tree/library/decimal-money). The live page's source and architecture links follow its
 displayed build commit when metadata is available.
 
 ## AI contribution
