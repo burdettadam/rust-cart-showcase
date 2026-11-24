@@ -61,3 +61,13 @@ Keep exact-cent validation, the established maximum amount, quantity bounds and
 atomic errors. Verify existing results and rounding boundaries at small and
 large amounts. The corresponding library source is retained on
 `library/decimal-money`.
+
+## Cart readability
+
+The user approved naming the money scale, tax rate and maximum amount,
+extracting `calculate_tax`, and moving empty receipt initialization into
+`CartReceipt::empty`. Implement on `refactor/cart-readability` with the
+verified library source retained on `library/cart-readability`. Existing
+pricing, promotion, validation and two-decimal formatting tests provide the
+regression checks. The user authorized merging this improvement after checks
+and independent reviews.

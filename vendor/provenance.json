@@ -1,11 +1,11 @@
 {
-  "source_commit": "dd5cb58ecd4876ea1ec2bfc65403ef6f1f8b34f6",
-  "source_tree": "72ca3d1ea2706b6305bb78cb43a8b4455778b504",
+  "source_commit": "25df2ef9ffddf3c1c7363cfd32a77a3d88ebe4d3",
+  "source_tree": "2b19308f9c4161f70dd42570a9b93b16c208b482",
   "algorithm": "sha256",
   "files": {
     "Cargo.lock": "1f4db6a5bc4d7aba0da2e25ec49fb724fe9612eccd0a3c562f36f138bb9f9f02",
     "Cargo.toml": "7b72265ab8c7df4caafc92b86f9970ec96a36ae8a2fabbfba5e70eaaa0ce7cf3",
-    "src/cart.rs": "5b07fe9bfd9c0da86e8a2c2ea896a9b29a998596bd9c6977da2f8f8237526255",
+    "src/cart.rs": "076bfb52ec0f96816d7543f554f479511e0bbb3996353a5b7947794d54f302be",
     "src/http_price_client.rs": "e8d0f5ec1211dc98af497bb47814002aabf88af86c6b769a8e5885bda8e4d75d",
     "src/lib.rs": "b4277cfdbbe83b90b3090192803f84a30c5ab72e8308d7c7c2153908ce5edd7a",
     "src/price_response.rs": "a83c34c4d3b41b1d1f691874683be103b9b1ddeaefc58c7419b126216124e6ba",
