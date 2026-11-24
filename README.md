@@ -1,6 +1,8 @@
 # Rust Cart Lab
 
-[![Rust Cart Lab — Exact by design. A Rust shopping cart with exact money, atomic updates and a WebAssembly browser demo.](docs/assets/rust-cart-lab.webp)](https://burdettadam.github.io/rust-cart-showcase/)
+[![Original Rust Cart Lab interface using integer-cent calculations.](docs/assets/rust-cart-lab.webp)](https://burdettadam.github.io/rust-cart-showcase/)
+
+*Original demo interface. The current cart calculates receipts with Decimal.*
 
 [**Open the live demo**](https://burdettadam.github.io/rust-cart-showcase/) ·
 [Architecture and Q&A](ARCHITECTURE.md) · [Development guide](DEVELOPMENT.md)

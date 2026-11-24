@@ -517,3 +517,23 @@ fn decimal_tax_preserves_cent_boundaries_at_small_and_large_amounts() {
         }
     }
 }
+
+#[test]
+fn receipt_money_keeps_two_decimal_places_including_zero_values() {
+    for (price, quantity) in [("0", u32::MAX), ("1", 1), ("1", 3)] {
+        let prices = FakePrices::returning(&[price]);
+        let mut cart = ShoppingCart::with_every_third_free(&prices);
+        cart.add("sample", quantity).unwrap();
+        let receipt = cart.receipt();
+        for amount in [
+            receipt.snapshot.items["sample"].unit_price,
+            receipt.merchandise_subtotal,
+            receipt.discount,
+            receipt.snapshot.subtotal,
+            receipt.snapshot.tax,
+            receipt.snapshot.total,
+        ] {
+            assert_eq!(amount.scale(), 2, "{price} × {quantity}: {amount}");
+        }
+    }
+}

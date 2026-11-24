@@ -187,10 +187,13 @@ fn calculate_receipt(
         let line_discount = item.unit_price.checked_mul(Decimal::from(free_quantity))?;
         discount = discount.checked_add(line_discount)?;
     }
-    let subtotal = merchandise.checked_sub(discount)?;
-    let tax = subtotal
-        .checked_mul(Decimal::new(125, 3))?
-        .round_dp_with_strategy(2, RoundingStrategy::ToPositiveInfinity);
+    let discount = checked_money(discount)?;
+    let subtotal = checked_money(merchandise.checked_sub(discount)?)?;
+    let tax = checked_money(
+        subtotal
+            .checked_mul(Decimal::new(125, 3))?
+            .round_dp_with_strategy(2, RoundingStrategy::ToPositiveInfinity),
+    )?;
     let total = checked_money(subtotal.checked_add(tax)?)?;
     Some(CartReceipt {
         snapshot: CartSnapshot {

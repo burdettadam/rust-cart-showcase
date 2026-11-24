@@ -79,7 +79,7 @@ The cart library is available on the showcase remote's
 
 ```sh
 git fetch origin library/decimal-money
-git diff --exit-code 2ff6c654b5ec9221c503fa6bebe3a13d179b7bbb HEAD:vendor/shopping-cart
+git diff --exit-code dd5cb58ecd4876ea1ec2bfc65403ef6f1f8b34f6 HEAD:vendor/shopping-cart
 ```
 
 Change business rules in the library checkout first. After reviewing that
