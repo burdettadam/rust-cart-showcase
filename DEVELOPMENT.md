@@ -75,11 +75,11 @@ playwright-cli -s=promotion close
 ## Update the library export
 
 The cart library is available on the showcase remote's
-`library/decimal-money` recovery branch. Verify its export from a fresh clone:
+`library/cart-readability` recovery branch. Verify its export from a fresh clone:
 
 ```sh
-git fetch origin library/decimal-money
-git diff --exit-code dd5cb58ecd4876ea1ec2bfc65403ef6f1f8b34f6 HEAD:vendor/shopping-cart
+git fetch origin library/cart-readability
+git diff --exit-code 25df2ef9ffddf3c1c7363cfd32a77a3d88ebe4d3 HEAD:vendor/shopping-cart
 ```
 
 Change business rules in the library checkout first. After reviewing that

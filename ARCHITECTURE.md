@@ -43,7 +43,7 @@ assignment and private completion link are not exported or deployed.
 
 The original exports came from the private library fork. The repeating promotion
 was developed in a separate library checkout recovered from its last verified
-export. The public `library/decimal-money` branch retains that checkout's
+export. The public `library/cart-readability` branch retains that checkout's
 source history. The [work record](PLANS.md#every-third-unit-free) identifies the
 original export and recovered baseline.
 
