@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use rust_decimal::Decimal;
+use rust_decimal::{Decimal, RoundingStrategy};
 use thiserror::Error;
 
 /// Retrieves a current unit price without changing the cart.
@@ -65,12 +65,12 @@ impl<P: PriceProvider> ShoppingCart<P> {
             receipt: CartReceipt {
                 snapshot: CartSnapshot {
                     items: BTreeMap::new(),
-                    subtotal: money(0),
-                    tax: money(0),
-                    total: money(0),
+                    subtotal: Decimal::new(0, 2),
+                    tax: Decimal::new(0, 2),
+                    total: Decimal::new(0, 2),
                 },
-                merchandise_subtotal: money(0),
-                discount: money(0),
+                merchandise_subtotal: Decimal::new(0, 2),
+                discount: Decimal::new(0, 2),
                 free_quantities: BTreeMap::new(),
             },
             every_third_free: false,
@@ -107,7 +107,7 @@ impl<P: PriceProvider> ShoppingCart<P> {
             .prices
             .unit_price(product)
             .map_err(CartError::PriceLookup)?;
-        let cents = price_in_cents(price).ok_or(CartError::InvalidPrice(price))?;
+        let unit_price = checked_money(price).ok_or(CartError::InvalidPrice(price))?;
 
         let mut free_quantities = self.receipt.free_quantities.clone();
         let new_free_units = self.free_units_for_addition(quantity);
@@ -119,7 +119,7 @@ impl<P: PriceProvider> ShoppingCart<P> {
             product.to_owned(),
             CartItem {
                 quantity: combined_quantity,
-                unit_price: money(cents),
+                unit_price,
             },
         );
         self.receipt =
@@ -164,48 +164,43 @@ pub(crate) fn valid_product(product: &str) -> bool {
     })
 }
 
-pub(crate) fn price_in_cents(price: Decimal) -> Option<u64> {
-    if price < Decimal::ZERO {
+pub(crate) fn checked_money(amount: Decimal) -> Option<Decimal> {
+    let maximum = Decimal::from_i128_with_scale(18_446_744_073_709_551_615, 2);
+    let mut amount = amount.normalize();
+    if amount < Decimal::ZERO || amount > maximum || amount.scale() > 2 {
         return None;
     }
-    let price = price.normalize();
-    if price.scale() > 2 {
-        return None;
-    }
-    u64::try_from(price.mantissa())
-        .ok()?
-        .checked_mul(10_u64.pow(2 - price.scale()))
+    amount.rescale(2);
+    Some(amount)
 }
 
 fn calculate_receipt(
     items: BTreeMap<String, CartItem>,
     free_quantities: BTreeMap<String, u32>,
 ) -> Option<CartReceipt> {
-    let mut merchandise = 0_u64;
-    let mut discount = 0_u64;
+    let mut merchandise = Decimal::new(0, 2);
+    let mut discount = Decimal::new(0, 2);
     for (product, item) in &items {
-        let price = price_in_cents(item.unit_price)?;
-        merchandise = merchandise.checked_add(price.checked_mul(u64::from(item.quantity))?)?;
-        let free = free_quantities.get(product).copied().unwrap_or(0);
-        discount = discount.checked_add(price.checked_mul(u64::from(free))?)?;
+        let line_total = item.unit_price.checked_mul(Decimal::from(item.quantity))?;
+        merchandise = checked_money(merchandise.checked_add(line_total)?)?;
+        let free_quantity = free_quantities.get(product).copied().unwrap_or(0);
+        let line_discount = item.unit_price.checked_mul(Decimal::from(free_quantity))?;
+        discount = discount.checked_add(line_discount)?;
     }
     let subtotal = merchandise.checked_sub(discount)?;
-    let tax = subtotal / 8 + u64::from(subtotal % 8 != 0);
-    let total = subtotal.checked_add(tax)?;
+    let tax = subtotal
+        .checked_mul(Decimal::new(125, 3))?
+        .round_dp_with_strategy(2, RoundingStrategy::ToPositiveInfinity);
+    let total = checked_money(subtotal.checked_add(tax)?)?;
     Some(CartReceipt {
         snapshot: CartSnapshot {
             items,
-            subtotal: money(subtotal),
-            tax: money(tax),
-            total: money(total),
+            subtotal,
+            tax,
+            total,
         },
-        merchandise_subtotal: money(merchandise),
-        discount: money(discount),
+        merchandise_subtotal: merchandise,
+        discount,
         free_quantities,
     })
-}
-
-fn money(cents: u64) -> Decimal {
-    // A u64 coefficient always fits Decimal's 96-bit mantissa.
-    Decimal::from_i128_with_scale(i128::from(cents), 2)
 }
